@@ -27,5 +27,11 @@ services:
       - ./client/:/usr/src/app
 
   backend:
-    image: springci/spring-boot-ci-image
+    image: gradle:jdk11
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/cost-tracker-backend
+    working_dir: /cost-tracker-backend
+    command: sh run.sh
     
