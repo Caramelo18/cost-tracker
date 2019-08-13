@@ -19,13 +19,15 @@ class Overview extends React.Component<any, any> {
         this.toggleEdit = this.toggleEdit.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
         this.submitEdit = this.submitEdit.bind(this);
+        this.submitDelete = this.submitDelete.bind(this);
 
         this.editTransactionCategory = this.editTransactionCategory.bind(this);
         this.editTransactionDescription = this.editTransactionDescription.bind(this);
         this.editTransactionValue = this.editTransactionValue.bind(this);
         this.editTransactionDate = this.editTransactionDate.bind(this);
 
-        this.updateList = this.updateList.bind(this);
+        this.updateEditList = this.updateEditList.bind(this);
+        this.updateDeleteList = this.updateDeleteList.bind(this);
 
     }
 
@@ -66,9 +68,20 @@ class Overview extends React.Component<any, any> {
             },
             body: JSON.stringify(data)
         }).then(response => response.json())
-        .then(data => this.updateList(data));
+        .then(response => this.updateEditList(response));
 
         this.toggleEdit({});
+    }
+
+    submitDelete() {
+        let id = this.state.modalData.id;
+        let url = "http://localhost:8080/transactions/" + id;
+
+        fetch(url, {
+            method: 'DELETE',
+        }).then(response => this.updateDeleteList(id));
+
+        this.toggleDelete({});
     }
 
     editTransactionCategory(event: any) {
@@ -95,7 +108,7 @@ class Overview extends React.Component<any, any> {
         this.setState({modalData: modalData});
     }
 
-    updateList(updatedTransaction: any) {
+    updateEditList(updatedTransaction: any) {
         let transactions = this.state.transactions.slice();
         
         transactions.forEach((transaction: any) => {
@@ -107,6 +120,18 @@ class Overview extends React.Component<any, any> {
             }
         });
         
+        this.setState({transactions: transactions});
+    }
+
+    updateDeleteList(removedId: string) {
+        let transactions = [];
+        
+        for(let transaction of this.state.transactions){
+            console.log(transaction.id, removedId);
+            if (transaction.id !== removedId)
+                transactions.push(transaction);
+        }
+
         this.setState({transactions: transactions});
     }
 
@@ -185,13 +210,30 @@ class Overview extends React.Component<any, any> {
                 <Modal.Header closeButton>
                     <Modal.Title>Delete Transaction</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+                <Modal.Body>
+                    <Row>
+                        <Col sm="3">Category</Col>
+                        <Col>{this.state.modalData.category}</Col>
+                    </Row>
+                    <Row>
+                        <Col sm="3">Description</Col>
+                        <Col>{this.state.modalData.description}</Col>
+                    </Row>
+                    <Row>
+                        <Col sm="3">Value</Col>
+                        <Col>{this.state.modalData.value}</Col>
+                    </Row>
+                    <Row>
+                        <Col sm="3">Date</Col>
+                        <Col>{this.state.modalData.date}</Col>
+                    </Row>
+                </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={this.toggleDelete}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={this.toggleDelete}>
-                        Save Changes
+                    <Button variant="primary" onClick={this.submitDelete}>
+                        Delete
                     </Button>
                 </Modal.Footer>
             </Modal>
