@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/transaction")
+@RequestMapping("/transactions")
 public class TransactionController {
     @Autowired
     private TransactionRepository transactionRepository;
@@ -34,6 +34,7 @@ public class TransactionController {
         Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new NotFoundException());
         transaction.setCategory(newTransaction.getCategory());
         transaction.setDate(newTransaction.getDate());
+        transaction.setValue(newTransaction.getValue());
         transaction.setDescription(newTransaction.getDescription());
         return transactionRepository.save(transaction);
     }
