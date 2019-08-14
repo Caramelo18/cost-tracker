@@ -2,8 +2,12 @@ import React from 'react';
 import './overview.css';
 
 import Table from 'react-bootstrap/Table';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
+import Col from 'react-bootstrap/Col';
 
 import Transaction from './transaction/transaction';
+import CreateModal from './create-modal/create-modal';
 import EditModal from './edit-modal/edit-modal';
 import DeleteModal from './delete-modal/delete-modal';
 
@@ -11,10 +15,12 @@ class Overview extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
 
-        this.setState({showEdit: false, showDelete: false});
+        this.setState({showCreate: false, showEdit: false, showDelete: false});
 
+        this.toggleCreate = this.toggleCreate.bind(this);
         this.toggleEdit = this.toggleEdit.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
+        this.submitCreate = this.submitCreate.bind(this);
         this.submitEdit = this.submitEdit.bind(this);
         this.submitDelete = this.submitDelete.bind(this);
 
@@ -23,6 +29,7 @@ class Overview extends React.Component<any, any> {
         this.editTransactionValue = this.editTransactionValue.bind(this);
         this.editTransactionDate = this.editTransactionDate.bind(this);
 
+        this.updateCreateList = this.updateCreateList.bind(this);
         this.updateEditList = this.updateEditList.bind(this);
         this.updateDeleteList = this.updateDeleteList.bind(this);
 
@@ -46,12 +53,39 @@ class Overview extends React.Component<any, any> {
         return rows;
     }
 
+    toggleCreate() {
+        let data;
+        if (this.state.showCreate === false) {
+            data = { 'category': '', 'description': '', 'value': '', 'date': '' };
+        } else {
+            data = {}
+        }
+        this.setState({showCreate: !this.state.showCreate, modalData: data});
+    }
+
     toggleEdit(data: object) {
         this.setState({showEdit: !this.state.showEdit, modalData: data});
     }
 
     toggleDelete(data: object) {
         this.setState({showDelete: !this.state.showDelete, modalData: data});
+    }
+
+    submitCreate() {
+        let url = "http://localhost:8080/transactions/";
+
+        let data = this.state.modalData;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+        .then(response => this.updateCreateList(response));
+
+        this.toggleCreate();
     }
 
     submitEdit() {
@@ -105,6 +139,12 @@ class Overview extends React.Component<any, any> {
         this.setState({modalData: modalData});
     }
 
+    updateCreateList(newTransaction: any) {
+        let transactions = this.state.transactions;
+        transactions.push(newTransaction);
+        this.setState({transactions: transactions});
+    }
+
     updateEditList(updatedTransaction: any) {
         let transactions = this.state.transactions.slice();
         
@@ -137,28 +177,45 @@ class Overview extends React.Component<any, any> {
             content = <div>Loading</div>
         } else {
             content = <>
-            <Table striped bordered hover size="sm">
-                <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Description</th>
-                    <th>Value</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {this.fillTable()}
-                </tbody>
-            </Table>
+            <Row className="top-bar">
+                <Col></Col>
+                <Col sm={6}></Col>
+                <Col>
+                    <Button variant="success" onClick={this.toggleCreate}>Add Transaction</Button>
+                </Col>
+                
+            </Row>
+            
+            <Row className="table-row">
+                <Table striped bordered hover size="sm">
+                    <thead>
+                    <tr>
+                        <th>Category</th> 
+                        <th>Description</th>
+                        <th>Value</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {this.fillTable()}
+                    </tbody>
+                </Table>
+            </Row>
+            
+
+            <CreateModal showCreate={this.state.showCreate} toggleCreate={this.toggleCreate}
+                modalData={this.state.modalData} submitCreate={this.submitCreate}
+                editTransactionCategory={this.editTransactionCategory} editTransactionDescription={this.editTransactionDescription}
+                editTransactionValue={this.editTransactionValue} />
             
             <EditModal showEdit={this.state.showEdit} toggleEdit={this.toggleEdit} 
                 modalData={this.state.modalData} submitEdit={this.submitEdit}
                 editTransactionCategory={this.editTransactionCategory} editTransactionDescription={this.editTransactionDescription}
-                editTransactionValue={this.editTransactionValue} editTransactionDate={this.editTransactionDate}/>
+                editTransactionValue={this.editTransactionValue} editTransactionDate={this.editTransactionDate} />
             
             <DeleteModal showDelete={this.state.showDelete} toggleDelete={this.toggleDelete} 
-                modalData={this.state.modalData} submitDelete={this.submitDelete}/>
+                modalData={this.state.modalData} submitDelete={this.submitDelete} />
             
             </>
             
