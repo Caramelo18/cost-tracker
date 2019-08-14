@@ -2,13 +2,10 @@ import React from 'react';
 import './overview.css';
 
 import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 
 import Transaction from './transaction/transaction';
+import EditModal from './edit-modal/edit-modal';
+import DeleteModal from './delete-modal/delete-modal';
 
 class Overview extends React.Component<any, any> {
     constructor(props: any) {
@@ -127,7 +124,6 @@ class Overview extends React.Component<any, any> {
         let transactions = [];
         
         for(let transaction of this.state.transactions){
-            console.log(transaction.id, removedId);
             if (transaction.id !== removedId)
                 transactions.push(transaction);
         }
@@ -155,88 +151,15 @@ class Overview extends React.Component<any, any> {
                 {this.fillTable()}
                 </tbody>
             </Table>
-
-            <Modal show={this.state.showEdit} onHide={() => this.setState({showEdit: false})}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit Transaction</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group as={Row}>
-                            <Form.Label column sm="2">
-                                Category
-                            </Form.Label>
-                            <Col sm="10">
-                                <Form.Control type="text" value={this.state.modalData.category} onChange={this.editTransactionCategory}/>
-                            </Col>
-                        </Form.Group>
-                        <Form.Group as={Row}>
-                            <Form.Label column sm="2">
-                                Description
-                            </Form.Label>
-                            <Col sm="10">
-                                <Form.Control type="text" value={this.state.modalData.description} onChange={this.editTransactionDescription}/>
-                            </Col>
-                        </Form.Group>
-                        <Form.Group as={Row}>
-                            <Form.Label column sm="2">
-                                Value
-                            </Form.Label>
-                            <Col sm="10">
-                                <Form.Control type="number" pattern="[0-9]" value={this.state.modalData.value} onChange={this.editTransactionValue}/>
-                            </Col>
-                        </Form.Group>
-                        <Form.Group as={Row}>
-                            <Form.Label column sm="2">
-                                Date
-                            </Form.Label>
-                            <Col sm="10">
-                                <Form.Control type="text" value={this.state.modalData.date} onChange={this.editTransactionDate}/>
-                            </Col>
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={this.toggleEdit}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={this.submitEdit}>
-                        Edit
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-
-            <Modal show={this.state.showDelete} onHide={() => this.setState({showDelete: false})}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Delete Transaction</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Row>
-                        <Col sm="3">Category</Col>
-                        <Col>{this.state.modalData.category}</Col>
-                    </Row>
-                    <Row>
-                        <Col sm="3">Description</Col>
-                        <Col>{this.state.modalData.description}</Col>
-                    </Row>
-                    <Row>
-                        <Col sm="3">Value</Col>
-                        <Col>{this.state.modalData.value}</Col>
-                    </Row>
-                    <Row>
-                        <Col sm="3">Date</Col>
-                        <Col>{this.state.modalData.date}</Col>
-                    </Row>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={this.toggleDelete}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={this.submitDelete}>
-                        Delete
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            
+            <EditModal showEdit={this.state.showEdit} toggleEdit={this.toggleEdit} 
+                modalData={this.state.modalData} submitEdit={this.submitEdit}
+                editTransactionCategory={this.editTransactionCategory} editTransactionDescription={this.editTransactionDescription}
+                editTransactionValue={this.editTransactionValue} editTransactionDate={this.editTransactionDate}/>
+            
+            <DeleteModal showDelete={this.state.showDelete} toggleDelete={this.toggleDelete} 
+                modalData={this.state.modalData} submitDelete={this.submitDelete}/>
+            
             </>
             
         }
