@@ -36,16 +36,33 @@ class Overview extends React.Component<any, any> {
     }
 
     componentDidMount(){
-        let url = "http://localhost:8080/transactions"
+        this.loadTransactions();
+        this.loadBalance()
+    }
+
+    loadTransactions() {
+        let transactionsUrl = "http://localhost:8080/transactions";
         
-        fetch(url)
+        fetch(transactionsUrl)
         .then(response => response.json())
         .then(data => {
             this.setState({transactions: data, modalData: {}});
         });
     }
 
+    loadBalance() {
+        let balanceUrl = "http://localhost:8080/balance";
+        fetch(balanceUrl)
+        .then(response => response.json())
+        .then(data => {
+            this.setState({balance: data.balance});
+        });
+    }
+
     fillTable() {
+        if(!this.state){
+            return;
+        }
         let rows: object[] = [];
         this.state.transactions.forEach((transaction: any) => {
             rows.push(<Transaction key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></Transaction>)            
@@ -178,7 +195,7 @@ class Overview extends React.Component<any, any> {
         } else {
             content = <>
             <Row className="top-bar">
-                <Col></Col>
+                <Col>Balance: {this.state.balance} </Col>
                 <Col sm={6}></Col>
                 <Col>
                     <Button variant="success" onClick={this.toggleCreate}>Add Transaction</Button>
