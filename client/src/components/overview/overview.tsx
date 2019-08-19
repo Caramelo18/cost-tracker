@@ -71,12 +71,7 @@ class Overview extends React.Component<any, any> {
     }
 
     toggleCreate() {
-        let data;
-        if (this.state.showCreate === false) {
-            data = { 'category': '', 'description': '', 'value': '', 'date': '' };
-        } else {
-            data = {}
-        }
+        let data = { 'category': 'Needs'};
         this.setState({showCreate: !this.state.showCreate, modalData: data});
     }
 

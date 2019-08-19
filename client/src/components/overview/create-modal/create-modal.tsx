@@ -28,7 +28,12 @@ class CreateModal extends React.Component<any, any> {
                                 Category
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control type="text" value={this.props.modalData.category} onChange={this.props.editTransactionCategory} required/>
+                                <Form.Control as="select" value={this.props.modalData.category} onChange={this.props.editTransactionCategory}>
+                                    <option>Needs</option>
+                                    <option>Wants</option>
+                                    <option>Other</option>
+                                    <option>Credit</option>
+                                </Form.Control>
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row}>
