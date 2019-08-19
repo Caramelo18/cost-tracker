@@ -100,7 +100,10 @@ class Overview extends React.Component<any, any> {
             },
             body: JSON.stringify(data)
         }).then(response => response.json())
-        .then(response => this.updateCreateList(response));
+        .then(response => {
+            this.updateCreateList(response);
+            this.loadBalance();
+        });
 
         this.toggleCreate();
     }
@@ -116,7 +119,10 @@ class Overview extends React.Component<any, any> {
             },
             body: JSON.stringify(data)
         }).then(response => response.json())
-        .then(response => this.updateEditList(response));
+        .then(response => {
+            this.updateEditList(response);
+            this.loadBalance();
+        });
 
         this.toggleEdit({});
     }
@@ -127,7 +133,10 @@ class Overview extends React.Component<any, any> {
 
         fetch(url, {
             method: 'DELETE',
-        }).then(response => this.updateDeleteList(id));
+        }).then(() => {
+            this.updateDeleteList(id);
+            this.loadBalance();
+        });
 
         this.toggleDelete({});
     }
