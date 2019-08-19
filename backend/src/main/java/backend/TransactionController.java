@@ -39,19 +39,28 @@ public class TransactionController {
     @GetMapping(value = "/{id}")
     public Transaction getOne(@PathVariable String id) {
         Transaction transaction = transactionService.getTransaction(id).orElseThrow(() -> new NotFoundException());
-
         return transaction;
     }
 
     @PutMapping(value = "/{id}")
     public Transaction update(@PathVariable String id, @RequestBody Transaction newTransaction) {
-        return transactionService.updateTransaction(id, newTransaction);
+        Transaction transaction = null;
+        try {
+            transaction = transactionService.updateTransaction(id, newTransaction);
+        } catch (TransactionService.NotFoundException e) {
+            throw new NotFoundException();
+        }
+        return transaction;
     }
 
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public void delete (@PathVariable String id) {
-        transactionService.deleteTransaction(id);
+        try {
+            transactionService.deleteTransaction(id);
+        } catch (TransactionService.NotFoundException e ){
+            throw new NotFoundException();
+        }
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)

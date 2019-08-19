@@ -41,7 +41,7 @@ public class TransactionService {
 
     @Transactional
     public Transaction updateTransaction(String id, Transaction updatedTransaction) {
-        Transaction transaction = transactionRepository.findById(id).get(); //TODO: fix get with 404
+        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new NotFoundException());
         Double previousValue = transaction.getValue();
         transaction.setCategory(updatedTransaction.getCategory());
         transaction.setDate(updatedTransaction.getDate());
@@ -58,7 +58,7 @@ public class TransactionService {
 
     @Transactional
     public void deleteTransaction(String id) {
-        Transaction transaction = transactionRepository.findById(id).get(); //TODO: fix get with 404
+        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new NotFoundException());
 
         Balance balance = balanceService.getCurrentBalance();
         Double newBalance = balance.getBalance() - transaction.getValue();
@@ -66,6 +66,11 @@ public class TransactionService {
 
         transactionRepository.delete(transaction);
         balanceService.updateBalance(balance);
+    }
+
+    public class NotFoundException extends RuntimeException {
+        public NotFoundException() {
+        }
     }
 
 }
