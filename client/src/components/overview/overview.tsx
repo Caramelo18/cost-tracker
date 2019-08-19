@@ -204,10 +204,18 @@ class Overview extends React.Component<any, any> {
         } else {
             content = <>
             <Row className="top-bar">
-                <Col>Balance: {this.state.balance} </Col>
-                <Col sm={6}></Col>
                 <Col>
-                    <Button variant="success" onClick={this.toggleCreate}>Add Transaction</Button>
+                    <Row className="text-md-right">
+                        <Col sm={12} className="balanceValue">{this.state.balance}</Col>
+                    </Row>
+                    <Row className="balanceLabel text-right">
+                        
+                        <Col sm={12}>Balance</Col>
+                    </Row>
+                </Col>
+                <Col sm={8}></Col>
+                <Col className="addButtonContainer">
+                    <Button  variant="success" onClick={this.toggleCreate}>Add Transaction</Button>
                 </Col>
                 
             </Row>

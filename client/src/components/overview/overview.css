@@ -1,9 +1,16 @@
-.top-bar{
+.top-bar {
     margin-top: 2%;
-
-    
 }
 
-.table-row{
+.table-row {
     margin-top: 2%;
+}
+
+.balanceValue {
+    font-size: 250%;
+}
+
+.addButtonContainer {
+    margin-top: auto;
+    margin-bottom: auto;
 }

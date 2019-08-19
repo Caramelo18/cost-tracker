@@ -1,4 +1,4 @@
-package backend;
+package backend.models;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;

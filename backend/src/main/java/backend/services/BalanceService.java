@@ -1,5 +1,7 @@
-package backend;
+package backend.services;
 
+import backend.models.Balance;
+import backend.repositories.BalanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

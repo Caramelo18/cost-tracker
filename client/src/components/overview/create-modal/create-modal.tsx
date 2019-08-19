@@ -24,26 +24,26 @@ class CreateModal extends React.Component<any, any> {
                 <Modal.Body>
                     <Form>
                         <Form.Group as={Row}>
-                            <Form.Label column sm="2">
+                            <Form.Label column sm="3">
                                 Category
                             </Form.Label>
-                            <Col sm="10">
+                            <Col sm="9">
                                 <Form.Control type="text" value={this.props.modalData.category} onChange={this.props.editTransactionCategory} required/>
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row}>
-                            <Form.Label column sm="2">
+                            <Form.Label column sm="3">
                                 Description
                             </Form.Label>
-                            <Col sm="10">
+                            <Col sm="9">
                                 <Form.Control type="text" value={this.props.modalData.description} onChange={this.props.editTransactionDescription} required/>
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row}>
-                            <Form.Label column sm="2">
+                            <Form.Label column sm="3">
                                 Value
                             </Form.Label>
-                            <Col sm="10">
+                            <Col sm="9">
                                 <Form.Control type="number" pattern="[0-9]" value={this.props.modalData.value} onChange={this.props.editTransactionValue} required/>
                             </Col>
                         </Form.Group>

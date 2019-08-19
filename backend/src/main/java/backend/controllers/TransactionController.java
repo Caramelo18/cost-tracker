@@ -1,14 +1,18 @@
-package backend;
+package backend.controllers;
 
+import backend.services.TransactionService;
+import backend.models.Transaction;
+import backend.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin
 @RestController
+@Controller
 @RequestMapping("/transactions")
 public class TransactionController {
     @Autowired
