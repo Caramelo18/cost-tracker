@@ -13,6 +13,9 @@ class CreateModal extends React.Component<any, any> {
     }
 
     render() {
+        if (!this.props.modalData){
+            return null;
+        }
         return (
             <Modal show={this.props.showCreate} onHide={() => this.props.toggleCreate()}>
                 <Modal.Header closeButton>

@@ -9,6 +9,9 @@ import Button from 'react-bootstrap/Button';
 class EditModal extends React.Component<any, any> {
 
     render() {
+        if (!this.props.modalData){
+            return null;
+        }
         return (
             <Modal show={this.props.showEdit} onHide={() => this.props.toggleEdit({})}>
                 <Modal.Header closeButton>

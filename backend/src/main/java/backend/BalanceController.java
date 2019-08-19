@@ -13,17 +13,11 @@ import java.util.List;
 @RequestMapping("/balance")
 public class BalanceController {
     @Autowired
-    private BalanceRepository balanceRepository;
+    private BalanceService balanceService;
 
     @GetMapping
     public Balance getBalance() {
-        List<Balance> balances = balanceRepository.findAll();
-        Balance balance = balances.get(0);
-        return balance;
+        return balanceService.getCurrentBalance();
     }
 
-    public void updateBalance(Double newBalanceValue) {
-        Balance currentBalance = getBalance();
-        currentBalance.setBalance(newBalanceValue);
-    }
 }

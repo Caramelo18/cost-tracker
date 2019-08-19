@@ -15,7 +15,7 @@ class Overview extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
 
-        this.setState({showCreate: false, showEdit: false, showDelete: false});
+        this.setState({showCreate: false, showEdit: false, showDelete: false, modalData: {}});
 
         this.toggleCreate = this.toggleCreate.bind(this);
         this.toggleEdit = this.toggleEdit.bind(this);
@@ -60,7 +60,7 @@ class Overview extends React.Component<any, any> {
     }
 
     fillTable() {
-        if(!this.state){
+        if(!('transactions' in this.state)){
             return;
         }
         let rows: object[] = [];

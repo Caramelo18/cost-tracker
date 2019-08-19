@@ -8,6 +8,9 @@ import Button from 'react-bootstrap/Button';
 class DeleteModal extends React.Component<any, any> {
 
     render() {
+        if (!this.props.modalData){
+            return null;
+        }
         return (
             <Modal show={this.props.showDelete} onHide={() => this.props.toggleDelete({})}>
                 <Modal.Header closeButton>

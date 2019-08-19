@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -12,38 +13,45 @@ import java.util.List;
 public class TransactionController {
     @Autowired
     private TransactionRepository transactionRepository;
+    @Autowired
+    private TransactionService transactionService;
 
     @PostMapping
     @ResponseStatus(code =  HttpStatus.CREATED)
     public Transaction add(@RequestBody Transaction transaction) {
-        return transactionRepository.save(transaction);
+        Transaction createdTransaction = null;
+        try{
+            createdTransaction = transactionService.addTransaction(transaction);
+        } catch (Exception e){
+            createdTransaction = new Transaction();
+            transaction.setValue(0.0);
+            transaction.setDescription("Invalid");
+            transaction.setCategory("Invalid");
+        }
+        return createdTransaction;
     }
 
     @GetMapping
     public List<Transaction> getAll() {
-        return transactionRepository.findAll();
+        return transactionService.getAll();
     }
 
     @GetMapping(value = "/{id}")
     public Transaction getOne(@PathVariable String id) {
-        return transactionRepository.findById(id).orElseThrow(() -> new NotFoundException());
+        Transaction transaction = transactionService.getTransaction(id).orElseThrow(() -> new NotFoundException());
+
+        return transaction;
     }
 
     @PutMapping(value = "/{id}")
     public Transaction update(@PathVariable String id, @RequestBody Transaction newTransaction) {
-        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new NotFoundException());
-        transaction.setCategory(newTransaction.getCategory());
-        transaction.setDate(newTransaction.getDate());
-        transaction.setValue(newTransaction.getValue());
-        transaction.setDescription(newTransaction.getDescription());
-        return transactionRepository.save(transaction);
+        return transactionService.updateTransaction(id, newTransaction);
     }
 
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public void delete (@PathVariable String id) {
-        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new NotFoundException());
-        transactionRepository.delete(transaction);
+        transactionService.deleteTransaction(id);
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
@@ -51,4 +59,5 @@ public class TransactionController {
         public NotFoundException() {
         }
     }
+
 }
