@@ -4,7 +4,7 @@ import './header.css';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import { BrowserRouter as Link } from "react-router-dom";
+import { BrowserRouter as _, Link } from "react-router-dom";
 
 
 class Header extends React.Component<any, any> {
@@ -14,6 +14,8 @@ class Header extends React.Component<any, any> {
                 <Row>
                     <Col sm={2}> <Link to="/">Overview</Link> </Col>
                     <Col sm={2}> <Link to="/salary">Salary</Link> </Col>
+                    <Col sm={2}> <Link to="/budget">Budget</Link> </Col>
+                    <Col sm={2}> <Link to="/subscriptions">Subscriptions</Link> </Col>
                 </Row>
             </nav>
         );

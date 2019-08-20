@@ -16,7 +16,6 @@ public class Transaction {
     @CreatedDate
     private Date date;
 
-
     public String getId() {
         return id;
     }

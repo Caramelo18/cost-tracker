@@ -2,7 +2,6 @@ package backend.controllers;
 
 import backend.services.TransactionService;
 import backend.models.Transaction;
-import backend.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -15,8 +14,6 @@ import java.util.List;
 @Controller
 @RequestMapping("/transactions")
 public class TransactionController {
-    @Autowired
-    private TransactionRepository transactionRepository;
     @Autowired
     private TransactionService transactionService;
 
