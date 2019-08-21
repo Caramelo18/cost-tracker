@@ -6,7 +6,14 @@ import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 
+import AddModal from './add-modal/add-modal';
+
 class Salary extends React.Component<any, any> {
+    constructor(props: any) {
+        super(props);
+
+        this.toggleAdd = this.toggleAdd.bind(this);
+    }
     componentDidMount() {
         this.loadSalaries();
     }
@@ -29,7 +36,7 @@ class Salary extends React.Component<any, any> {
             }
 
         }
-        this.setState({ currentSalary: currentSalary, salaries: salariesH });
+        this.setState({ currentSalary: currentSalary, salaries: salariesH, showAdd: false, modalData: {} });
     }
 
     fillTable() {
@@ -52,7 +59,12 @@ class Salary extends React.Component<any, any> {
         return rows;
     }
 
-    addSalary() {
+    toggleAdd() {
+        console.log(this.state.showAdd);
+        this.setState({ showAdd: !this.state.showAdd });
+    }
+
+    submitAdd() {
         let url = "http://localhost:8080/salaries";
         let data = { yearGrossValue: "40000", grossValue: "3333", netValue: "2400", location: 'Barcelona', company: 'TomTom Telematics', role: 'Associate Software Engineer' };
         fetch(url, {
@@ -67,8 +79,20 @@ class Salary extends React.Component<any, any> {
             });
     }
 
+    editTransactionCategory() {
+        console.log("category");
+    }
+
+    editTransactionDescription() {
+        console.log("category");
+    }
+
+    editTransactionValue() {
+        console.log("category");
+    }
+
     render() {
-        if (!this.state) {
+        if (this.state == null) {
             return null;
         }
         let salariesTable = null;
@@ -101,9 +125,14 @@ class Salary extends React.Component<any, any> {
 
         return (
             <div>
-                <Button></Button>
+
                 <Row className="currSalaryHeader">
-                    Current Salary
+                    <Col sm={2}>
+                        Current Salary
+                    </Col>
+                    <Col sm={8}></Col>
+                    <Col sm={2}><Button onClick={this.toggleAdd}>Add Salary</Button></Col>
+
                 </Row>
                 <Row className="currSalaryValues">
                     <Col >
@@ -140,6 +169,11 @@ class Salary extends React.Component<any, any> {
                 </Row>
 
                 {salariesTable}
+
+                <AddModal showAdd={this.state.showAdd} toggleAdd={this.toggleAdd}
+                    modalData={this.state.modalData} submitCreate={this.submitAdd}
+                    editTransactionCategory={this.editTransactionCategory} editTransactionDescription={this.editTransactionDescription}
+                    editTransactionValue={this.editTransactionValue} />
             </div>
         );
     }
