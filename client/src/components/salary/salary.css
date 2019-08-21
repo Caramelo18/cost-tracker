@@ -1,0 +1,20 @@
+.attribute {
+    font-size: 1.3vw;
+    text-align: right;
+}
+
+.label, .attribute{
+    padding-right: 15%;
+}
+
+.currSalaryHeader{
+    font-size: 1vw;
+}
+
+.currSalaryValues {
+    margin-top: 2%;
+}
+
+.currSalaryDetails {
+    margin-top: 5%;
+}

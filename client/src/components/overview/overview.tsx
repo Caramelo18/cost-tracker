@@ -203,8 +203,7 @@ class Overview extends React.Component<any, any> {
                         <Row className="text-md-right">
                             <Col sm={12} className="balanceValue">{this.state.balance}</Col>
                         </Row>
-                        <Row className="balanceLabel text-right">
-
+                        <Row className="balanceLabel text-md-right">
                             <Col sm={12}>Balance</Col>
                         </Row>
                     </Col>

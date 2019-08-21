@@ -10,12 +10,12 @@ import { BrowserRouter as _, Link } from "react-router-dom";
 class Header extends React.Component<any, any> {
     render() {
         return (
-            <nav>
+            <nav >
                 <Row>
-                    <Col sm={2}> <Link to="/">Overview</Link> </Col>
-                    <Col sm={2}> <Link to="/salary">Salary</Link> </Col>
-                    <Col sm={2}> <Link to="/budget">Budget</Link> </Col>
-                    <Col sm={2}> <Link to="/subscriptions">Subscriptions</Link> </Col>
+                    <Col sm={3}> <Link to="/" className="align-middle">Overview</Link> </Col>
+                    <Col sm={3}> <Link to="/salary" className="align-middle">Salary</Link> </Col>
+                    <Col sm={3}> <Link to="/budget" className="align-middle">Budget</Link> </Col>
+                    <Col sm={3}> <Link to="/subscriptions" className="align-middle">Subscriptions</Link> </Col>
                 </Row>
             </nav>
         );

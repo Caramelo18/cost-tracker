@@ -10,6 +10,7 @@ import java.util.Date;
 public class Salary {
     @Id
     private String id;
+    private Double yearGrossValue;
     private Double grossValue;
     private Double netValue;
     @CreatedDate
@@ -25,6 +26,14 @@ public class Salary {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Double getYearGrossValue() {
+        return yearGrossValue;
+    }
+
+    public void setYearGrossValue(Double yearGrossValue) {
+        this.yearGrossValue = yearGrossValue;
     }
 
     public Double getGrossValue() {
