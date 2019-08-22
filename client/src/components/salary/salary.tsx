@@ -13,6 +13,8 @@ class Salary extends React.Component<any, any> {
         super(props);
 
         this.toggleAdd = this.toggleAdd.bind(this);
+        this.editModalData = this.editModalData.bind(this);
+        this.submitAdd = this.submitAdd.bind(this);
     }
     componentDidMount() {
         this.loadSalaries();
@@ -60,13 +62,13 @@ class Salary extends React.Component<any, any> {
     }
 
     toggleAdd() {
-        console.log(this.state.showAdd);
         this.setState({ showAdd: !this.state.showAdd });
     }
 
     submitAdd() {
         let url = "http://localhost:8080/salaries";
-        let data = { yearGrossValue: "40000", grossValue: "3333", netValue: "2400", location: 'Barcelona', company: 'TomTom Telematics', role: 'Associate Software Engineer' };
+        let data = this.state.modalData;
+        
         fetch(url, {
             method: 'POST',
             headers: {
@@ -74,22 +76,32 @@ class Salary extends React.Component<any, any> {
             },
             body: JSON.stringify(data)
         }).then(response => response.json())
-            .then(response => {
-                console.log(response);
+            .then(() => {
+                this.toggleAdd();
+                this.loadSalaries();
             });
     }
 
-    editTransactionCategory() {
-        console.log("category");
+    editModalData(event: any) {
+        const name = event.target.name;
+        const value = event.target.value;
+        
+        let modalData = this.state.modalData;
+        modalData[name] = value;
+
+        if (name == 'yearGrossValue' ){
+            let grossValue = value / 12;
+            grossValue = Math.round(grossValue);
+            modalData.grossValue = grossValue;
+        } else if (name == 'grossValue') {
+            let yearGrossValue = value * 12;
+            yearGrossValue = Math.round(yearGrossValue);
+            modalData.yearGrossValue = yearGrossValue;
+        }
+        
+        this.setState({modalData: modalData});        
     }
 
-    editTransactionDescription() {
-        console.log("category");
-    }
-
-    editTransactionValue() {
-        console.log("category");
-    }
 
     render() {
         if (this.state == null) {
@@ -171,9 +183,8 @@ class Salary extends React.Component<any, any> {
                 {salariesTable}
 
                 <AddModal showAdd={this.state.showAdd} toggleAdd={this.toggleAdd}
-                    modalData={this.state.modalData} submitCreate={this.submitAdd}
-                    editTransactionCategory={this.editTransactionCategory} editTransactionDescription={this.editTransactionDescription}
-                    editTransactionValue={this.editTransactionValue} />
+                    modalData={this.state.modalData} submitAdd={this.submitAdd}
+                    editModalData={this.editModalData} />
             </div>
         );
     }
