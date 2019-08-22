@@ -24,7 +24,12 @@ class EditModal extends React.Component<any, any> {
                                 Category
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control type="text" value={this.props.modalData.category} onChange={this.props.editTransactionCategory}/>
+                                <Form.Control as="select" name="category" value={this.props.modalData.category} onChange={this.props.editModalData}>
+                                    <option>Needs</option>
+                                    <option>Wants</option>
+                                    <option>Other</option>
+                                    <option>Credit</option>
+                                </Form.Control>
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row}>
@@ -32,7 +37,7 @@ class EditModal extends React.Component<any, any> {
                                 Description
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control type="text" value={this.props.modalData.description} onChange={this.props.editTransactionDescription}/>
+                                <Form.Control type="text" name="description" value={this.props.modalData.description} onChange={this.props.editModalData}/>
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row}>
@@ -40,7 +45,7 @@ class EditModal extends React.Component<any, any> {
                                 Value
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control type="number" pattern="[0-9]" value={this.props.modalData.value} onChange={this.props.editTransactionValue}/>
+                                <Form.Control type="number" pattern="[0-9]" name="value" value={this.props.modalData.value} onChange={this.props.editModalData}/>
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row}>
@@ -48,7 +53,7 @@ class EditModal extends React.Component<any, any> {
                                 Date
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control type="text" value={this.props.modalData.date} onChange={this.props.editTransactionDate}/>
+                                <Form.Control type="text" name="date" value={this.props.modalData.date} onChange={this.props.editModalData}/>
                             </Col>
                         </Form.Group>
                     </Form>

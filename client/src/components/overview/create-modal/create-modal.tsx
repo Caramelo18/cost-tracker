@@ -28,7 +28,7 @@ class CreateModal extends React.Component<any, any> {
                                 Category
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control as="select" value={this.props.modalData.category} onChange={this.props.editTransactionCategory}>
+                                <Form.Control as="select" name="category" value={this.props.modalData.category} onChange={this.props.editModalData}>
                                     <option>Needs</option>
                                     <option>Wants</option>
                                     <option>Other</option>
@@ -41,7 +41,7 @@ class CreateModal extends React.Component<any, any> {
                                 Description
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control type="text" value={this.props.modalData.description} onChange={this.props.editTransactionDescription} required/>
+                                <Form.Control type="text" name="description" value={this.props.modalData.description} onChange={this.props.editModalData} required/>
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row}>
@@ -49,7 +49,7 @@ class CreateModal extends React.Component<any, any> {
                                 Value
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control type="number" pattern="[0-9]" value={this.props.modalData.value} onChange={this.props.editTransactionValue} required/>
+                                <Form.Control type="number" pattern="[0-9]" name="value" value={this.props.modalData.value} onChange={this.props.editModalData} required/>
                             </Col>
                         </Form.Group>
                     </Form>

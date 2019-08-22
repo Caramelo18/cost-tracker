@@ -24,10 +24,7 @@ class Overview extends React.Component<any, any> {
         this.submitEdit = this.submitEdit.bind(this);
         this.submitDelete = this.submitDelete.bind(this);
 
-        this.editTransactionCategory = this.editTransactionCategory.bind(this);
-        this.editTransactionDescription = this.editTransactionDescription.bind(this);
-        this.editTransactionValue = this.editTransactionValue.bind(this);
-        this.editTransactionDate = this.editTransactionDate.bind(this);
+        this.editModalData = this.editModalData.bind(this);
 
         this.updateCreateList = this.updateCreateList.bind(this);
         this.updateEditList = this.updateEditList.bind(this);
@@ -87,7 +84,7 @@ class Overview extends React.Component<any, any> {
         let url = "http://localhost:8080/transactions/";
 
         let data = this.state.modalData;
-
+        
         fetch(url, {
             method: 'POST',
             headers: {
@@ -136,27 +133,13 @@ class Overview extends React.Component<any, any> {
         this.toggleDelete({});
     }
 
-    editTransactionCategory(event: any) {
-        let modalData = Object.assign({}, this.state.modalData);
-        modalData.category = event.target.value;
-        this.setState({ modalData: modalData });
-    }
+    editModalData(event: any) {
+        const name = event.target.name;
+        const value = event.target.value;
 
-    editTransactionDescription(event: any) {
         let modalData = Object.assign({}, this.state.modalData);
-        modalData.description = event.target.value;
-        this.setState({ modalData: modalData });
-    }
+        modalData[name] = value;
 
-    editTransactionValue(event: any) {
-        let modalData = Object.assign({}, this.state.modalData);
-        modalData.value = event.target.value;
-        this.setState({ modalData: modalData });
-    }
-
-    editTransactionDate(event: any) {
-        let modalData = Object.assign({}, this.state.modalData);
-        modalData.date = event.target.value;
         this.setState({ modalData: modalData });
     }
 
@@ -234,13 +217,11 @@ class Overview extends React.Component<any, any> {
 
                 <CreateModal showCreate={this.state.showCreate} toggleCreate={this.toggleCreate}
                     modalData={this.state.modalData} submitCreate={this.submitCreate}
-                    editTransactionCategory={this.editTransactionCategory} editTransactionDescription={this.editTransactionDescription}
-                    editTransactionValue={this.editTransactionValue} />
+                    editModalData={this.editModalData} />
 
                 <EditModal showEdit={this.state.showEdit} toggleEdit={this.toggleEdit}
                     modalData={this.state.modalData} submitEdit={this.submitEdit}
-                    editTransactionCategory={this.editTransactionCategory} editTransactionDescription={this.editTransactionDescription}
-                    editTransactionValue={this.editTransactionValue} editTransactionDate={this.editTransactionDate} />
+                    editModalData={this.editModalData} />
 
                 <DeleteModal showDelete={this.state.showDelete} toggleDelete={this.toggleDelete}
                     modalData={this.state.modalData} submitDelete={this.submitDelete} />

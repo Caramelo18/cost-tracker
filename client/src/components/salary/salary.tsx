@@ -89,11 +89,11 @@ class Salary extends React.Component<any, any> {
         let modalData = this.state.modalData;
         modalData[name] = value;
 
-        if (name == 'yearGrossValue' ){
+        if (name === 'yearGrossValue' ){
             let grossValue = value / 12;
             grossValue = Math.round(grossValue);
             modalData.grossValue = grossValue;
-        } else if (name == 'grossValue') {
+        } else if (name === 'grossValue') {
             let yearGrossValue = value * 12;
             yearGrossValue = Math.round(yearGrossValue);
             modalData.yearGrossValue = yearGrossValue;
