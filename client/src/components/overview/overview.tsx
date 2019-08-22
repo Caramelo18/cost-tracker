@@ -95,9 +95,8 @@ class Overview extends React.Component<any, any> {
             .then(response => {
                 this.updateCreateList(response);
                 this.loadBalance();
+                this.toggleCreate();
             });
-
-        this.toggleCreate();
     }
 
     submitEdit() {
@@ -114,9 +113,8 @@ class Overview extends React.Component<any, any> {
             .then(response => {
                 this.updateEditList(response);
                 this.loadBalance();
+                this.toggleEdit({});
             });
-
-        this.toggleEdit({});
     }
 
     submitDelete() {
@@ -128,9 +126,8 @@ class Overview extends React.Component<any, any> {
         }).then(() => {
             this.updateDeleteList(id);
             this.loadBalance();
+            this.toggleDelete({});
         });
-
-        this.toggleDelete({});
     }
 
     editModalData(event: any) {

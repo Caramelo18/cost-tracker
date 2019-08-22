@@ -73,17 +73,21 @@ class Salary extends React.Component<any, any> {
 
     toggleEdit(event: any) {
         let id, salary = {};
+        
         if (event != null) {
             id = event.target.parentNode.id;
-            salary = this.getSelectedSalary(id); // TODO: clear modalData on modal dismissal 
-        } 
-        this.setState({ showEdit: !this.state.showEdit, modalData: salary }, () => console.log(this.state.showEdit));
+        } else if (this.state.showEdit === false ) {
+            id = this.state.currentSalary.id;
+        }
+        salary = this.getSelectedSalary(id);
+        
+        this.setState({ showEdit: !this.state.showEdit, modalData: salary });
     }
 
     getSelectedSalary(id: string) {
         let selectedSalary: object = {};
         if (this.state.currentSalary.id === id) {
-            console.log("edit current");
+            selectedSalary = Object.assign({}, this.state.currentSalary);
         } else {
             for (let salary of this.state.salaries) {
                 if (salary.id === id) { 
@@ -201,7 +205,8 @@ class Salary extends React.Component<any, any> {
                     <Col sm={2}>
                         Current Salary
                     </Col>
-                    <Col sm={8}></Col>
+                    <Col sm={6}></Col>
+                    <Col sm={2}><Button variant="warning" onClick={() => this.toggleEdit(null)}>Edit Salary</Button></Col>
                     <Col sm={2}><Button onClick={this.toggleAdd}>Add Salary</Button></Col>
 
                 </Row>
