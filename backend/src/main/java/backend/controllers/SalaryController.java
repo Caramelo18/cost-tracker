@@ -2,6 +2,7 @@ package backend.controllers;
 
 import backend.models.Salary;
 import backend.services.SalaryService;
+import backend.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -27,4 +28,32 @@ public class SalaryController {
     public List<Salary> getAll() {
         return salaryService.getAll();
     }
+
+    @PutMapping(value = "/{id}")
+    public Salary update (@PathVariable String id, @RequestBody Salary updatedSalary) {
+        Salary salary = null;
+        try {
+            salary = salaryService.editSalary(id, updatedSalary);
+        } catch (TransactionService.NotFoundException e) {
+            throw new NotFoundException();
+        }
+        return salary;
+    }
+
+    @DeleteMapping(value = "/{id}")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public void delete (@PathVariable String id) {
+        try {
+            salaryService.deleteSalary(id);
+        } catch (TransactionService.NotFoundException e ){
+            throw new NotFoundException();
+        }
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public class NotFoundException extends RuntimeException {
+        public NotFoundException() {
+        }
+    }
+
 }

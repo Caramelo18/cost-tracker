@@ -43,4 +43,29 @@ public class SalaryService {
         }
         return currentSalary;
     }
+
+    public Salary editSalary(String id, Salary updatedSalary) {
+        Salary salary = salaryRepository.findById(id).orElseThrow(() -> new NotFoundException());
+
+        salary.setYearGrossValue(updatedSalary.getYearGrossValue());
+        salary.setGrossValue(updatedSalary.getGrossValue());
+        salary.setNetValue(updatedSalary.getNetValue());
+        salary.setStartDate(updatedSalary.getStartDate());
+        salary.setEndDate(updatedSalary.getEndDate());
+        salary.setLocation(updatedSalary.getLocation());
+        salary.setCompany(updatedSalary.getCompany());
+        salary.setRole(updatedSalary.getRole());
+
+        return salaryRepository.save(salary);
+    }
+
+    public void deleteSalary(String id) {
+        Salary salary = salaryRepository.findById(id).orElseThrow(() -> new NotFoundException());
+        salaryRepository.delete(salary);
+    }
+
+    public class NotFoundException extends RuntimeException {
+        public NotFoundException() {
+        }
+    }
 }

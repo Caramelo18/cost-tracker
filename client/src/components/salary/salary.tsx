@@ -7,6 +7,7 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 
 import AddModal from './add-modal/add-modal';
+import EditModal from './edit-modal/edit-modal';
 
 class Salary extends React.Component<any, any> {
     constructor(props: any) {
@@ -15,6 +16,11 @@ class Salary extends React.Component<any, any> {
         this.toggleAdd = this.toggleAdd.bind(this);
         this.editModalData = this.editModalData.bind(this);
         this.submitAdd = this.submitAdd.bind(this);
+
+        this.toggleEdit = this.toggleEdit.bind(this);
+        this.submitEdit = this.submitEdit.bind(this);
+
+        this.submitDelete = this.submitDelete.bind(this);
     }
     componentDidMount() {
         this.loadSalaries();
@@ -38,7 +44,7 @@ class Salary extends React.Component<any, any> {
             }
 
         }
-        this.setState({ currentSalary: currentSalary, salaries: salariesH, showAdd: false, modalData: {} });
+        this.setState({ currentSalary: currentSalary, salaries: salariesH, showAdd: false, showEdit: false, modalData: {} });
     }
 
     fillTable() {
@@ -46,7 +52,7 @@ class Salary extends React.Component<any, any> {
         this.state.salaries.forEach((salary: any) => {
             let startDate = new Date(salary.startDate).toDateString();
             let endDate = new Date(salary.endDate).toDateString();
-            let salaryRow = <tr>
+            let salaryRow = <tr onClick={this.toggleEdit} key={salary.id} id={salary.id}>
                 <td>{salary.location}</td>
                 <td>{salary.company}</td>
                 <td>{salary.role}</td>
@@ -65,6 +71,29 @@ class Salary extends React.Component<any, any> {
         this.setState({ showAdd: !this.state.showAdd });
     }
 
+    toggleEdit(event: any) {
+        let id, salary = {};
+        if (event != null) {
+            id = event.target.parentNode.id;
+            salary = this.getSelectedSalary(id); // TODO: clear modalData on modal dismissal 
+        } 
+        this.setState({ showEdit: !this.state.showEdit, modalData: salary }, () => console.log(this.state.showEdit));
+    }
+
+    getSelectedSalary(id: string) {
+        let selectedSalary: object = {};
+        if (this.state.currentSalary.id === id) {
+            console.log("edit current");
+        } else {
+            for (let salary of this.state.salaries) {
+                if (salary.id === id) { 
+                    selectedSalary = Object.assign({}, salary);
+                }
+            }
+        }
+        return selectedSalary;
+    }
+
     submitAdd() {
         let url = "http://localhost:8080/salaries";
         let data = this.state.modalData;
@@ -80,6 +109,36 @@ class Salary extends React.Component<any, any> {
                 this.toggleAdd();
                 this.loadSalaries();
             });
+    }
+
+    submitEdit() {
+        let data = this.state.modalData;
+        let url = "http://localhost:8080/salaries/" + data.id;
+
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+            .then(response => {
+                // this.updateEditList(response);
+                this.toggleEdit(null);
+                this.loadSalaries();
+            });
+    }
+
+    submitDelete() {
+        let data = this.state.modalData;
+        let url = "http://localhost:8080/salaries/" + data.id;
+
+        fetch(url, {
+            method: 'DELETE',
+        }).then(() => {
+            this.toggleEdit(null);
+            this.loadSalaries();
+        });
     }
 
     editModalData(event: any) {
@@ -185,6 +244,10 @@ class Salary extends React.Component<any, any> {
                 <AddModal showAdd={this.state.showAdd} toggleAdd={this.toggleAdd}
                     modalData={this.state.modalData} submitAdd={this.submitAdd}
                     editModalData={this.editModalData} />
+                
+                <EditModal showEdit={this.state.showEdit} toggleEdit={this.toggleEdit}
+                    modalData={this.state.modalData} submitEdit={this.submitEdit}
+                    editModalData={this.editModalData} submitDelete={this.submitDelete} />
             </div>
         );
     }
