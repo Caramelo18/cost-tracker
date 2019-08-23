@@ -10,6 +10,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import Header from '../header/header';
 import Overview from '../overview/overview';
 import Salary from '../salary/salary';
+import Subscriptions from '../subscriptions/subscriptions';
 
 const App: React.FC = () => {
     return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
                         <Col>
                             <Route exact path="/" component={Overview} />
                             <Route path="/salary" component={Salary} />
+                            <Route path="/subscriptions" component={Subscriptions} />
                         </Col>
                     </Row>
                 </Container>

@@ -6,20 +6,21 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 
-class CreateModal extends React.Component<any, any> {
+class AddModal extends React.Component<any, any> {
 
     invalidInput(): boolean {
-        return this.props.modalData.category == null || this.props.modalData.description == null || this.props.modalData.value == null || this.props.modalData.value === "";
+        return this.props.modalData.category == null || this.props.modalData.description == null || this.props.modalData.periodicity == null
+        || this.props.modalData.value == null || this.props.modalData.value === "";
     }
 
     render() {
-        if (!this.props.modalData){
+        if (!this.props.modalData) {
             return null;
         }
         return (
-            <Modal show={this.props.showCreate} onHide={() => this.props.toggleCreate()}>
+            <Modal show={this.props.showAdd} onHide={() => this.props.toggleAdd()}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Create Transaction</Modal.Title>
+                    <Modal.Title>Add Salary</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
@@ -32,7 +33,6 @@ class CreateModal extends React.Component<any, any> {
                                     <option>Needs</option>
                                     <option>Wants</option>
                                     <option>Other</option>
-                                    <option>Credit</option>
                                 </Form.Control>
                             </Col>
                         </Form.Group>
@@ -41,7 +41,20 @@ class CreateModal extends React.Component<any, any> {
                                 Description
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control type="text" name="description" value={this.props.modalData.description} onChange={this.props.editModalData} required/>
+                                <Form.Control type="text" name="description" onChange={this.props.editModalData} required />
+                            </Col>
+                        </Form.Group>
+                        <Form.Group as={Row}>
+                            <Form.Label column sm="3">
+                                Periodicity
+                            </Form.Label>
+                            <Col sm="9">
+                                <Form.Control as="select" name="periodicity" value={this.props.modalData.periodicity} onChange={this.props.editModalData}>
+                                    <option>Monthly</option>
+                                    <option>3 Months</option>
+                                    <option>6 Months</option>
+                                    <option>Yearly</option>
+                                </Form.Control>
                             </Col>
                         </Form.Group>
                         <Form.Group as={Row}>
@@ -49,17 +62,17 @@ class CreateModal extends React.Component<any, any> {
                                 Value
                             </Form.Label>
                             <Col sm="9">
-                                <Form.Control type="number" pattern="[0-9]" name="value" value={this.props.modalData.value} onChange={this.props.editModalData} required/>
+                                <Form.Control type="number" pattern="[0-9]" name="value" onChange={this.props.editModalData} required />
                             </Col>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => this.props.toggleCreate()}>
+                    <Button variant="secondary" onClick={() => this.props.toggleAdd()}>
                         Close
                     </Button>
-                    <Button variant="primary" disabled={this.invalidInput()} onClick={this.props.submitCreate}>
-                        Create
+                    <Button variant="primary" disabled={this.invalidInput()} onClick={this.props.submitAdd}>
+                        Add
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -68,4 +81,4 @@ class CreateModal extends React.Component<any, any> {
 
 }
 
-export default CreateModal;
+export default AddModal;
