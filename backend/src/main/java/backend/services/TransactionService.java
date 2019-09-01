@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +34,10 @@ public class TransactionService {
     }
 
     public List<Transaction> getAll() {
-        return transactionRepository.findAll();
+        Comparator<Transaction> comparator = (Transaction t1, Transaction t2) -> t1.getDate().compareTo(t2.getDate());
+        List<Transaction> transactions = transactionRepository.findAll();
+        Collections.sort(transactions, comparator.reversed());
+        return transactions;
     }
 
     public Optional<Transaction> getTransaction(String id) {

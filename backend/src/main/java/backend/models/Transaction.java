@@ -15,6 +15,7 @@ public class Transaction {
     private String description;
     @CreatedDate
     private Date date;
+    private String subsciptionId;
 
     public String getId() {
         return id;
@@ -55,4 +56,14 @@ public class Transaction {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public String getSubsciptionId() {
+        return subsciptionId;
+    }
+
+    public void setSubsciptionId(String subsciptionId) {
+        this.subsciptionId = subsciptionId;
+    }
+
 }
+

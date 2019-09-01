@@ -56,20 +56,13 @@ class Overview extends React.Component<any, any> {
             });
     }
 
-    sortTransactions(trA: any, trB: any) {
-        return new Date(trA.date).getDate() < new Date(trB.date).getDate() ? 1 : -1;
-    }
-
     fillTable() {
         if (!('transactions' in this.state)) {
             return;
         }
-        
-        let transactions = this.state.transactions.concat();
-        transactions = transactions.sort(this.sortTransactions)
-        
+            
         let rows: object[] = [];
-        transactions.forEach((transaction: any) => {
+        this.state.transactions.forEach((transaction: any) => {
             rows.push(<Transaction key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></Transaction>)
         });
         return rows;

@@ -12,9 +12,11 @@ public class Subscription {
     private String id;
     private String category;
     private String description;
+    private String periodicity;
     private Integer daysInterval;
     @CreatedDate
-    private Date date;
+    private Date startDate;
+    private Double value;
 
     public String getId() {
         return id;
@@ -40,6 +42,14 @@ public class Subscription {
         this.description = description;
     }
 
+    public void setPeriodicity(String periodicity) {
+        this.periodicity = periodicity;
+    }
+
+    public String getPeriodicity() {
+        return this.periodicity;
+    }
+
     public Integer getDaysInterval() {
         return daysInterval;
     }
@@ -48,11 +58,19 @@ public class Subscription {
         this.daysInterval = daysInterval;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Double getValue() {
+        return value;
+    }
+
+    public void setValue(Double value) {
+        this.value = value;
     }
 }
