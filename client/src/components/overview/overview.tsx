@@ -143,7 +143,8 @@ class Overview extends React.Component<any, any> {
 
     updateCreateList(newTransaction: any) {
         let transactions = this.state.transactions;
-        transactions.push(newTransaction);
+        let newTransactionArr = [newTransaction];
+        transactions = newTransactionArr.concat(transactions);
         this.setState({ transactions: transactions });
     }
 

@@ -2,11 +2,12 @@ import React from 'react';
 import './subscriptions.css';
 
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 
+import Subscription from './subscription/subscription';
 import AddModal from './add-modal/add-modal';
+import PayModal from './pay-modal/pay-modal';
 
 class Subscriptions extends React.Component<any, any> {
     constructor(props: any) {
@@ -16,11 +17,15 @@ class Subscriptions extends React.Component<any, any> {
         this.toggleAdd = this.toggleAdd.bind(this);
         this.editModalData = this.editModalData.bind(this);
         this.submitAdd = this.submitAdd.bind(this);
+        this.submitPay = this.submitPay.bind(this);
         this.updateSubscriptions = this.updateSubscriptions.bind(this);
+        this.togglePay = this.togglePay.bind(this);
+        this.toggleEdit = this.toggleEdit.bind(this);
+        this.toggleDelete = this.toggleDelete.bind(this);
     }
 
     componentDidMount() {
-        this.setState({ showAdd: false, subscriptions: [] });
+        this.setState({ showAdd: false, showPay: false, subscriptions: [] });
         this.loadSubscriptions();
     }
 
@@ -28,7 +33,6 @@ class Subscriptions extends React.Component<any, any> {
         let url = "http://localhost:8080/subscriptions";
 
         fetch(url).then(response => response.json()).then(response => {
-            console.log(response);
             this.setState({ subscriptions: response });
         })
 
@@ -40,6 +44,19 @@ class Subscriptions extends React.Component<any, any> {
             modalData = { category: 'Needs', periodicity: 'Monthly' };
         }
         this.setState({ showAdd: !this.state.showAdd, modalData: modalData });
+    }
+
+    togglePay(data: any) {
+        console.log(data);
+        this.setState({ showPay: !this.state.showPay, modalData: data });
+    }
+
+    toggleEdit() {
+        console.log("toggle edit");
+    }
+
+    toggleDelete() {
+        console.log("toggle delete");
     }
 
     editModalData(event: any) {
@@ -77,27 +94,27 @@ class Subscriptions extends React.Component<any, any> {
                 this.updateSubscriptions(response);
                 this.toggleAdd();
             });
+    }
 
+    submitPay() {
+        console.log("pay");
+
+        this.togglePay([]);
     }
 
     updateSubscriptions(subscription: any) {
         let subscriptions = this.state.subscriptions;
         subscriptions.push(subscription);
-        this.setState({subscriptions: subscriptions});
+        this.setState({ subscriptions: subscriptions });
     }
 
     fillTable() {
         let rows: any[] = [];
-        console.log(this.state.subscriptions);
 
         this.state.subscriptions.forEach((subscription: any) => {
-            let element = <tr>
-                <td>{subscription.category}</td>
-                <td>{subscription.description}</td>
-                <td>{subscription.value}</td>
-                <td>{subscription.periodicity}</td>
-                <td>{subscription.lastPayment}</td>
-            </tr>
+            let element = <Subscription key={subscription.id} id={subscription.id} category={subscription.category} description={subscription.description} value={subscription.value}
+                periodicity={subscription.periodicity} lastPayment={subscription.lastPayment}
+                togglePay={this.togglePay} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete} />
             rows.push(element);
         });
 
@@ -138,6 +155,10 @@ class Subscriptions extends React.Component<any, any> {
             <AddModal showAdd={this.state.showAdd} toggleAdd={this.toggleAdd}
                 modalData={this.state.modalData} submitAdd={this.submitAdd}
                 editModalData={this.editModalData} />
+
+            <PayModal showPay={this.state.showPay} togglePay={this.togglePay}
+                modalData={this.state.modalData} submitPay={this.submitPay}
+            />
 
         </>
         );
