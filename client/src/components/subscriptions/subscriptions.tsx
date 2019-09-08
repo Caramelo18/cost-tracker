@@ -98,6 +98,22 @@ class Subscriptions extends React.Component<any, any> {
 
     submitPay() {
         console.log("pay");
+        let url = "http://localhost:8080/subscriptions/pay";
+
+        let data = this.state.modalData;
+
+        console.log(data);
+        
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+            .then(response => {
+                console.log(response);
+            });
 
         this.togglePay([]);
     }
@@ -113,7 +129,7 @@ class Subscriptions extends React.Component<any, any> {
 
         this.state.subscriptions.forEach((subscription: any) => {
             let element = <Subscription key={subscription.id} id={subscription.id} category={subscription.category} description={subscription.description} value={subscription.value}
-                periodicity={subscription.periodicity} lastPayment={subscription.lastPayment}
+                periodicity={subscription.periodicity} paidUntil={subscription.paidUntil} daysInterval={subscription.daysInterval} startDate={subscription.startDate}
                 togglePay={this.togglePay} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete} />
             rows.push(element);
         });

@@ -16,6 +16,7 @@ public class Subscription {
     private Integer daysInterval;
     @CreatedDate
     private Date startDate;
+    private Date paidUntil;
     private Double value;
 
     public String getId() {
@@ -62,8 +63,16 @@ public class Subscription {
         return startDate;
     }
 
-    public void setDate(Date startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public Date getPaidUntil() {
+        return paidUntil;
+    }
+
+    public void setPaidUntil(Date paidUntil) {
+        this.paidUntil = paidUntil;
     }
 
     public Double getValue() {

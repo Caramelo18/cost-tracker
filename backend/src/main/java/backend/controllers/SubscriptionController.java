@@ -27,4 +27,9 @@ public class SubscriptionController {
     public List<Subscription> getSubscriptions() {
         return subscriptionService.getSubscriptions();
     }
+
+    @RequestMapping(value = "/pay", method = RequestMethod.POST)
+    public void paySubscription(@RequestBody Subscription subscription) {
+        subscriptionService.paySubscription(subscription);
+    }
 }
