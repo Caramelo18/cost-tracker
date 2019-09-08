@@ -48,7 +48,6 @@ public class SubscriptionService {
             localDateTime = localDateTime.plusDays(daysInterval);
             paidUntil = DateUtils.asDate(localDateTime);
         } else {
-            System.out.println("\n\n\n" + "already paid " + daysInterval);
             LocalDateTime localDateTime = DateUtils.asLocalDateTime(paidUntil);
             localDateTime = localDateTime.plusDays(daysInterval);
             paidUntil = DateUtils.asDate(localDateTime);

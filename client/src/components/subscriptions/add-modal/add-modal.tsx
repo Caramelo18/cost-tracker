@@ -20,7 +20,7 @@ class AddModal extends React.Component<any, any> {
         return (
             <Modal show={this.props.showAdd} onHide={() => this.props.toggleAdd()}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add Salary</Modal.Title>
+                    <Modal.Title>Add Subscription</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>

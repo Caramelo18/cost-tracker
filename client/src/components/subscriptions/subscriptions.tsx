@@ -156,7 +156,7 @@ class Subscriptions extends React.Component<any, any> {
                             <th>Description</th>
                             <th>Value</th>
                             <th>Periodicity</th>
-                            <th>Last Payment</th>
+                            <th>Paid Until</th>
                             <th>Days Left</th>
                             <th>Actions</th>
                         </tr>
