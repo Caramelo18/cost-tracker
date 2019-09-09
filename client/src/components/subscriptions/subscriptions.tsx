@@ -8,6 +8,8 @@ import Button from 'react-bootstrap/Button';
 import Subscription from './subscription/subscription';
 import AddModal from './add-modal/add-modal';
 import PayModal from './pay-modal/pay-modal';
+import EditModal from './edit-modal/edit-modal';
+import DeleteModal from './delete-modal/delete-modal';
 
 class Subscriptions extends React.Component<any, any> {
     constructor(props: any) {
@@ -18,6 +20,8 @@ class Subscriptions extends React.Component<any, any> {
         this.editModalData = this.editModalData.bind(this);
         this.submitAdd = this.submitAdd.bind(this);
         this.submitPay = this.submitPay.bind(this);
+        this.submitEdit = this.submitEdit.bind(this);
+        this.submitDelete = this.submitDelete.bind(this);
         this.updateSubscriptions = this.updateSubscriptions.bind(this);
         this.togglePay = this.togglePay.bind(this);
         this.toggleEdit = this.toggleEdit.bind(this);
@@ -25,7 +29,7 @@ class Subscriptions extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        this.setState({ showAdd: false, showPay: false, subscriptions: [] });
+        this.setState({ showAdd: false, showPay: false, showEdit: false, showDelete: false, subscriptions: [] });
         this.loadSubscriptions();
     }
 
@@ -51,12 +55,13 @@ class Subscriptions extends React.Component<any, any> {
         this.setState({ showPay: !this.state.showPay, modalData: data });
     }
 
-    toggleEdit() {
-        console.log("toggle edit");
+    toggleEdit(data: any) {
+        console.log(data);
+        this.setState({ showEdit: !this.state.showEdit, modalData: data });
     }
 
-    toggleDelete() {
-        console.log("toggle delete");
+    toggleDelete(data: any) {
+        this.setState({ showDelete: !this.state.showDelete, modalData: data });
     }
 
     editModalData(event: any) {
@@ -118,6 +123,14 @@ class Subscriptions extends React.Component<any, any> {
         this.togglePay([]);
     }
 
+    submitEdit() {
+        console.log("submit edit");
+    }
+
+    submitDelete() {
+        console.log("submit delete");
+    }
+
     updateSubscriptions(subscription: any) {
         let subscriptions = this.state.subscriptions;
         subscriptions.push(subscription);
@@ -175,6 +188,12 @@ class Subscriptions extends React.Component<any, any> {
             <PayModal showPay={this.state.showPay} togglePay={this.togglePay}
                 modalData={this.state.modalData} submitPay={this.submitPay}
             />
+
+            <EditModal showEdit={this.state.showEdit} toggleEdit={this.toggleEdit} 
+                modalData={this.state.modalData} submitEdit={this.submitEdit}
+                editModalData={this.editModalData} />
+
+            <DeleteModal showDelete={false}/>
 
         </>
         );
