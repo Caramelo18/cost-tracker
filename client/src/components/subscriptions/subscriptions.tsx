@@ -51,12 +51,10 @@ class Subscriptions extends React.Component<any, any> {
     }
 
     togglePay(data: any) {
-        console.log(data);
         this.setState({ showPay: !this.state.showPay, modalData: data });
     }
 
     toggleEdit(data: any) {
-        console.log(data);
         this.setState({ showEdit: !this.state.showEdit, modalData: data });
     }
 
@@ -68,7 +66,7 @@ class Subscriptions extends React.Component<any, any> {
         const name = event.target.name;
         const value = event.target.value;
 
-        let modalData = this.state.modalData;
+        let modalData = Object.assign({}, this.state.modalData);
         modalData[name] = value;
 
         this.setState({ modalData: modalData });
@@ -102,13 +100,10 @@ class Subscriptions extends React.Component<any, any> {
     }
 
     submitPay() {
-        console.log("pay");
         let url = "http://localhost:8080/subscriptions/pay";
 
         let data = this.state.modalData;
 
-        console.log(data);
-        
         fetch(url, {
             method: 'POST',
             headers: {
@@ -124,11 +119,33 @@ class Subscriptions extends React.Component<any, any> {
     }
 
     submitEdit() {
-        console.log("submit edit");
+        let url = "http://localhost:8080/subscriptions/";
+        let data = this.state.modalData;
+        url = url + data.id;
+
+        fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+            .then(response => {
+                this.loadSubscriptions();
+                this.toggleEdit({});
+            });
     }
 
     submitDelete() {
-        console.log("submit delete");
+        let url = "http://localhost:8080/subscriptions/" + this.state.modalData.id;
+        
+        fetch(url, {
+            method: 'DELETE',
+        }).then(() => {
+            this.loadSubscriptions({});
+            this.toggleDelete({});
+        });
+
     }
 
     updateSubscriptions(subscription: any) {
@@ -189,11 +206,12 @@ class Subscriptions extends React.Component<any, any> {
                 modalData={this.state.modalData} submitPay={this.submitPay}
             />
 
-            <EditModal showEdit={this.state.showEdit} toggleEdit={this.toggleEdit} 
+            <EditModal showEdit={this.state.showEdit} toggleEdit={this.toggleEdit}
                 modalData={this.state.modalData} submitEdit={this.submitEdit}
                 editModalData={this.editModalData} />
 
-            <DeleteModal showDelete={false}/>
+            <DeleteModal showDelete={this.state.showDelete} toggleDelete={this.toggleDelete}
+                modalData={this.state.modalData} submitDelete={this.submitDelete} />
 
         </>
         );
