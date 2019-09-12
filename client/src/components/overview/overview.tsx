@@ -5,6 +5,7 @@ import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
 
 import Transaction from './transaction/transaction';
 import CreateModal from './create-modal/create-modal';
@@ -15,8 +16,6 @@ class Overview extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
 
-        this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {} });
-
         this.toggleCreate = this.toggleCreate.bind(this);
         this.toggleEdit = this.toggleEdit.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
@@ -25,14 +24,15 @@ class Overview extends React.Component<any, any> {
         this.submitDelete = this.submitDelete.bind(this);
 
         this.editModalData = this.editModalData.bind(this);
+        this.editSearchString = this.editSearchString.bind(this);
 
         this.updateCreateList = this.updateCreateList.bind(this);
         this.updateEditList = this.updateEditList.bind(this);
         this.updateDeleteList = this.updateDeleteList.bind(this);
-
     }
 
     componentDidMount() {
+        this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {}, searchString: "" });
         this.loadTransactions();
         this.loadBalance()
     }
@@ -60,11 +60,23 @@ class Overview extends React.Component<any, any> {
         if (!('transactions' in this.state)) {
             return;
         }
-            
+
         let rows: object[] = [];
-        this.state.transactions.forEach((transaction: any) => {
-            rows.push(<Transaction key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></Transaction>)
-        });
+        const searchString = this.state.searchString.toLowerCase();
+
+        if (searchString === "") {
+            this.state.transactions.forEach((transaction: any) => {
+                rows.push(<Transaction key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></Transaction>)
+            });
+        } else {
+            this.state.transactions.forEach((transaction: any) => {
+                const description = transaction.description.toLowerCase();
+                if(description.indexOf(searchString) >= 0 ){
+                    rows.push(<Transaction key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></Transaction>)
+                }
+            });
+        }
+        
         return rows;
     }
 
@@ -85,7 +97,7 @@ class Overview extends React.Component<any, any> {
         let url = "http://localhost:8080/transactions/";
 
         let data = this.state.modalData;
-        
+
         fetch(url, {
             method: 'POST',
             headers: {
@@ -174,6 +186,11 @@ class Overview extends React.Component<any, any> {
         this.setState({ transactions: transactions });
     }
 
+    editSearchString(event: any) {
+        let string: any = event.target.value;
+        this.setState({ searchString: string });
+    }
+
     render() {
         let content;
         if (!this.state) {
@@ -194,6 +211,11 @@ class Overview extends React.Component<any, any> {
                         <Button variant="success" onClick={this.toggleCreate}>Add Transaction</Button>
                     </Col>
 
+                </Row>
+                <Row>
+                    <Form>
+                        <Form.Control type="text" placeholder="Search" value={this.state.searchString} onChange={this.editSearchString} />
+                    </Form>
                 </Row>
 
                 <Row className="table-row">

@@ -142,7 +142,7 @@ class Subscriptions extends React.Component<any, any> {
         fetch(url, {
             method: 'DELETE',
         }).then(() => {
-            this.loadSubscriptions({});
+            this.loadSubscriptions();
             this.toggleDelete({});
         });
 
