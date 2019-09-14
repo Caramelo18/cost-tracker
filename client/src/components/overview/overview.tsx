@@ -8,6 +8,9 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+
 import Transaction from './transaction/transaction';
 import CreateModal from './create-modal/create-modal';
 import EditModal from './edit-modal/edit-modal';
@@ -29,6 +32,8 @@ class Overview extends React.Component<any, any> {
         this.editModalData = this.editModalData.bind(this);
         this.editSearchString = this.editSearchString.bind(this);
         this.editSearchCategory = this.editSearchCategory.bind(this);
+        this.editStartDate = this.editStartDate.bind(this);
+        this.editEndDate = this.editEndDate.bind(this);
 
         this.updateCreateList = this.updateCreateList.bind(this);
         this.updateEditList = this.updateEditList.bind(this);
@@ -36,7 +41,10 @@ class Overview extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {}, searchString: "", searchCategories: ["Needs", "Wants", "Other", "Credit"] });
+        const startDate = new Date(2019, 7, 1);
+        const endDate = new Date();
+
+        this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {}, searchString: "", searchCategories: ["Needs", "Wants", "Other", "Credit"], startDate: startDate, endDate: endDate });
         this.loadTransactions();
         this.loadBalance()
     }
@@ -67,11 +75,8 @@ class Overview extends React.Component<any, any> {
 
         let rows: object[] = [];
         let transactions = this.state.transactions;
-        const searchString = this.state.searchString.toLowerCase();
 
-        if (this.filterEnabled()) {
-            transactions = this.filterTransactions(transactions);
-        }
+        transactions = this.filterTransactions(transactions);
 
         transactions.forEach((transaction: any) => {
             rows.push(<Transaction key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></Transaction>)
@@ -153,6 +158,20 @@ class Overview extends React.Component<any, any> {
         this.setState({ modalData: modalData });
     }
 
+    editStartDate(event: any) {
+        let newDate = event;
+        newDate.setHours(0, 0, 0);
+
+        this.setState({ startDate: newDate });
+    }
+
+    editEndDate(event: any) {
+        let newDate: Date = event;
+        newDate.setHours(23, 59, 59);
+
+        this.setState({ endDate: newDate });
+    }
+
     updateCreateList(newTransaction: any) {
         let transactions = this.state.transactions;
         let newTransactionArr = [newTransaction];
@@ -221,12 +240,14 @@ class Overview extends React.Component<any, any> {
         transactions.forEach((transaction: any) => {
             const matchesCategory = filteredCategories.indexOf(transaction.category) >= 0;
             const description = transaction.description.toLowerCase();
-            let matchesString = false; 
-            if(searchString === "" || description.indexOf(searchString) >= 0) {
-                matchesString = true
+            let matchesString = false;
+            if (searchString === "" || description.indexOf(searchString) >= 0) {
+                matchesString = true;
             }
+            const date = new Date(transaction.date);
+            const inDateRange = date >= this.state.startDate && date <= this.state.endDate;
 
-            if(matchesCategory && matchesString){
+            if (matchesCategory && matchesString && inDateRange) {
                 filteredTransactions.push(transaction);
             }
         });
@@ -257,6 +278,13 @@ class Overview extends React.Component<any, any> {
                 </Row>
 
                 <Row className="search-bar justify-content-end">
+
+                    <label>From: </label>
+                    <DatePicker selected={this.state.startDate} onChange={this.editStartDate} />
+
+                    <label>To: </label>
+                    <DatePicker selected={this.state.endDate} onChange={this.editEndDate} />
+
                     <DropdownButton id="dropdown-basic-button" title="Category">
                         <Form.Group id="formGridCheckbox">
                             <Form.Check className="checkbox" type="checkbox" label="Needs" name="Needs" checked={this.state.searchCategories.includes("Needs")} onChange={this.editSearchCategory} />
