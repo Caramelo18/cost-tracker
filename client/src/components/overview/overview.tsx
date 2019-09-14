@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
+import DropdownButton from 'react-bootstrap/DropdownButton';
 
 import Transaction from './transaction/transaction';
 import CreateModal from './create-modal/create-modal';
@@ -23,8 +24,11 @@ class Overview extends React.Component<any, any> {
         this.submitEdit = this.submitEdit.bind(this);
         this.submitDelete = this.submitDelete.bind(this);
 
+        this.filterEnabled = this.filterEnabled.bind(this);
+
         this.editModalData = this.editModalData.bind(this);
         this.editSearchString = this.editSearchString.bind(this);
+        this.editSearchCategory = this.editSearchCategory.bind(this);
 
         this.updateCreateList = this.updateCreateList.bind(this);
         this.updateEditList = this.updateEditList.bind(this);
@@ -32,7 +36,7 @@ class Overview extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {}, searchString: "" });
+        this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {}, searchString: "", searchCategories: ["Needs", "Wants", "Other", "Credit"] });
         this.loadTransactions();
         this.loadBalance()
     }
@@ -62,21 +66,17 @@ class Overview extends React.Component<any, any> {
         }
 
         let rows: object[] = [];
+        let transactions = this.state.transactions;
         const searchString = this.state.searchString.toLowerCase();
 
-        if (searchString === "") {
-            this.state.transactions.forEach((transaction: any) => {
-                rows.push(<Transaction key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></Transaction>)
-            });
-        } else {
-            this.state.transactions.forEach((transaction: any) => {
-                const description = transaction.description.toLowerCase();
-                if(description.indexOf(searchString) >= 0 ){
-                    rows.push(<Transaction key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></Transaction>)
-                }
-            });
+        if (this.filterEnabled()) {
+            transactions = this.filterTransactions(transactions);
         }
-        
+
+        transactions.forEach((transaction: any) => {
+            rows.push(<Transaction key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></Transaction>)
+        });
+
         return rows;
     }
 
@@ -186,9 +186,52 @@ class Overview extends React.Component<any, any> {
         this.setState({ transactions: transactions });
     }
 
+    filterEnabled() {
+        if (this.state.searchCategories.length !== 4 || this.state.searchString !== "") {
+            return true;
+        }
+        return false;
+    }
+
     editSearchString(event: any) {
         let string: any = event.target.value;
         this.setState({ searchString: string });
+    }
+
+    editSearchCategory(event: any) {
+        let category = event.target.name;
+        let newCategories = this.state.searchCategories.slice(0);
+        let index = newCategories.indexOf(category);
+
+        if (index >= 0) {
+            newCategories.splice(index, 1);
+            this.setState({ searchCategories: newCategories });
+        } else {
+            newCategories.push(category);
+            this.setState({ searchCategories: newCategories });
+        }
+    }
+
+    filterTransactions(transactions: any) {
+        const searchString = this.state.searchString.toLowerCase();
+        const filteredCategories = this.state.searchCategories;
+
+        let filteredTransactions: any[] = [];
+
+        transactions.forEach((transaction: any) => {
+            const matchesCategory = filteredCategories.indexOf(transaction.category) >= 0;
+            const description = transaction.description.toLowerCase();
+            let matchesString = false; 
+            if(searchString === "" || description.indexOf(searchString) >= 0) {
+                matchesString = true
+            }
+
+            if(matchesCategory && matchesString){
+                filteredTransactions.push(transaction);
+            }
+        });
+
+        return filteredTransactions;
     }
 
     render() {
@@ -197,7 +240,7 @@ class Overview extends React.Component<any, any> {
             content = <div>Loading</div>
         } else {
             content = <>
-                <Row className="top-bar">
+                <Row className="overview-bar">
                     <Col>
                         <Row className="text-md-right">
                             <Col sm={12} className="balanceValue">{this.state.balance}</Col>
@@ -212,8 +255,17 @@ class Overview extends React.Component<any, any> {
                     </Col>
 
                 </Row>
-                <Row>
-                    <Form>
+
+                <Row className="search-bar justify-content-end">
+                    <DropdownButton id="dropdown-basic-button" title="Category">
+                        <Form.Group id="formGridCheckbox">
+                            <Form.Check className="checkbox" type="checkbox" label="Needs" name="Needs" checked={this.state.searchCategories.includes("Needs")} onChange={this.editSearchCategory} />
+                            <Form.Check className="checkbox" type="checkbox" label="Wants" name="Wants" checked={this.state.searchCategories.includes("Wants")} onChange={this.editSearchCategory} />
+                            <Form.Check className="checkbox" type="checkbox" label="Other" name="Other" checked={this.state.searchCategories.includes("Other")} onChange={this.editSearchCategory} />
+                            <Form.Check className="checkbox" type="checkbox" label="Credit" name="Credit" checked={this.state.searchCategories.includes("Credit")} onChange={this.editSearchCategory} />
+                        </Form.Group>
+                    </DropdownButton>
+                    <Form className="">
                         <Form.Control type="text" placeholder="Search" value={this.state.searchString} onChange={this.editSearchString} />
                     </Form>
                 </Row>

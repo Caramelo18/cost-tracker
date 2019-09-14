@@ -1,4 +1,4 @@
-.table-row {
+.table-row, .search-bar {
     margin-top: 2%;
 }
 
@@ -9,4 +9,7 @@
 .addButtonContainer {
     margin-top: auto;
     margin-bottom: auto;
+}
+.checkbox {
+    margin-left: 15px;
 }
