@@ -41,8 +41,9 @@ class Overview extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        const startDate = new Date(2019, 7, 1);
-        const endDate = new Date();
+        const startDate: Date = new Date(2019, 7, 1);
+        let endDate: Date = new Date();
+        endDate.setHours(23, 59, 59);
 
         this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {}, searchString: "", searchCategories: ["Needs", "Wants", "Other", "Credit"], startDate: startDate, endDate: endDate });
         this.loadTransactions();
@@ -278,12 +279,15 @@ class Overview extends React.Component<any, any> {
                 </Row>
 
                 <Row className="search-bar justify-content-end">
+                    <div className="datePickerContainer">
+                        <label>From: </label>
+                        <DatePicker selected={this.state.startDate} onChange={this.editStartDate} />
+                    </div>
 
-                    <label>From: </label>
-                    <DatePicker selected={this.state.startDate} onChange={this.editStartDate} />
-
-                    <label>To: </label>
-                    <DatePicker selected={this.state.endDate} onChange={this.editEndDate} />
+                    <div className="datePickerContainer">
+                        <label className="dateLabel">To: </label>
+                        <DatePicker selected={this.state.endDate} onChange={this.editEndDate} />
+                    </div>
 
                     <DropdownButton id="dropdown-basic-button" title="Category">
                         <Form.Group id="formGridCheckbox">

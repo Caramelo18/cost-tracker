@@ -13,3 +13,15 @@
 .checkbox {
     margin-left: 15px;
 }
+
+.react-datepicker-wrapper, .react-datepicker__input-container, input{
+    height: 100%;
+}
+
+.react-datepicker-wrapper {
+    margin-right: 1.5vw;
+}
+
+.datePickerContainer label {
+    margin-right: 0.5vw;
+}
