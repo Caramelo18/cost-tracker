@@ -25,3 +25,10 @@
 .datePickerContainer label {
     margin-right: 0.5vw;
 }
+.filterSummary {
+    margin-top:2%;
+}
+
+.filterSummary span {
+    margin-right: 1.5vw;
+}

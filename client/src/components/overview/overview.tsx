@@ -77,13 +77,16 @@ class Overview extends React.Component<any, any> {
         let rows: object[] = [];
         let transactions = this.state.transactions;
 
-        transactions = this.filterTransactions(transactions);
+        const transactionsInfo = this.filterTransactions(transactions);
+
+        transactions = transactionsInfo['transactions'];
+        const filterSummary = transactionsInfo['filterSummary'];
 
         transactions.forEach((transaction: any) => {
             rows.push(<Transaction key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></Transaction>)
         });
 
-        return rows;
+        return { transactions: rows, filterSummary: filterSummary };
     }
 
     toggleCreate() {
@@ -237,6 +240,7 @@ class Overview extends React.Component<any, any> {
         const filteredCategories = this.state.searchCategories;
 
         let filteredTransactions: any[] = [];
+        let totalValue: number = 0;
 
         transactions.forEach((transaction: any) => {
             const matchesCategory = filteredCategories.indexOf(transaction.category) >= 0;
@@ -250,10 +254,15 @@ class Overview extends React.Component<any, any> {
 
             if (matchesCategory && matchesString && inDateRange) {
                 filteredTransactions.push(transaction);
+                totalValue += transaction.value;
             }
         });
 
-        return filteredTransactions;
+        const numTransactions: number = filteredTransactions.length;
+        const averageValue: number = Math.round((totalValue / numTransactions) * 100) / 100;
+        let filterSummary = { 'numTransactions': numTransactions, 'averageValue': averageValue, 'totalValue': totalValue };
+
+        return { transactions: filteredTransactions, filterSummary: filterSummary };
     }
 
     render() {
@@ -261,6 +270,14 @@ class Overview extends React.Component<any, any> {
         if (!this.state) {
             content = <div>Loading</div>
         } else {
+            const transactionsInfo = this.fillTable();
+
+            let transactions, filterSummary: any;
+            if (transactionsInfo != null) {
+                transactions = transactionsInfo!['transactions'] ? transactionsInfo!['transactions'] : [];
+                filterSummary = transactionsInfo!['filterSummary'];
+            }
+
             content = <>
                 <Row className="overview-bar">
                     <Col>
@@ -302,6 +319,21 @@ class Overview extends React.Component<any, any> {
                     </Form>
                 </Row>
 
+                <Row className="justify-content-end">
+                    {this.filterEnabled() &&
+                        <div className="filterSummary">
+                            <span>
+                                Transactions: {filterSummary!['numTransactions']}
+                            </span>
+                            <span>
+                                Average value: {filterSummary['averageValue']}
+                            </span>
+                            <span>
+                                Total value: {filterSummary['totalValue']}
+                            </span>
+                        </div>}
+                </Row>
+
                 <Row className="table-row">
                     <Table striped bordered hover size="sm">
                         <thead>
@@ -314,7 +346,7 @@ class Overview extends React.Component<any, any> {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.fillTable()}
+                            {transactions}
                         </tbody>
                     </Table>
                 </Row>
