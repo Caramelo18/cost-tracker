@@ -41,11 +41,18 @@ class Overview extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        const startDate: Date = new Date(2019, 7, 1);
-        let endDate: Date = new Date();
-        endDate.setHours(23, 59, 59);
+        const currentDate: Date = new Date();
+        let defaultStartDate: Date = new Date(currentDate.getTime());
+        defaultStartDate.setDate(1);
+        defaultStartDate.setHours(0, 0, 0);
+        
+        let defaultEndDate: Date = new Date(defaultStartDate.getFullYear(), defaultStartDate.getMonth() + 1, 0);
+        defaultEndDate.setHours(23, 59, 59);
+        
+        const startDate: Date = defaultStartDate;
+        const endDate: Date = defaultEndDate;
 
-        this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {}, searchString: "", searchCategories: ["Needs", "Wants", "Other", "Credit"], startDate: startDate, endDate: endDate });
+        this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {}, searchString: "", searchCategories: ["Needs", "Wants", "Other", "Credit"], startDate: startDate, endDate: endDate, defaultStartDate: defaultStartDate, defaultEndDate: defaultEndDate });
         this.loadTransactions();
         this.loadBalance()
     }
