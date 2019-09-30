@@ -20,3 +20,5 @@ In order to run it, execute:
 ``` docker-compose up ```
 If it is the first time you run it you might need to add the flag ```--build```
 
+To access it, browse into http://localhost:3000/
+
