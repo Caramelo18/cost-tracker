@@ -1,21 +1,23 @@
-import { TransactionsHistory, ADD_TRANSACTION, TransactionsActionTypes } from './types';
+import { TransactionsActionTypes, TransactionsState } from './types';
+import { Reducer } from 'redux';
 
-const initialState: TransactionsHistory = {
+export const initialState: TransactionsState = {
     transactions: []
 }
 
-export function transactionsReducer(
-    state = initialState,
-    action: TransactionsActionTypes
-): TransactionsHistory {
+export const transactionsReducer: Reducer<TransactionsState> = ( state = initialState, action) =>
+ {
+    console.log("REDUCER");
     switch (action!.type) {
-        case ADD_TRANSACTION:
+        case TransactionsActionTypes.ADD_TRANSACTION:
             let newState = state.transactions.slice();
-            newState.concat(action!.payload);
-            console.log("adding to redux");
+            newState.concat(action.payload);
+            console.log("adding transaction redux");
             return { transactions: newState };
-
+        case TransactionsActionTypes.SET_TRANSACTIONS:
+            console.log("setting transactions redux");
+            return { transactions: action.payload };
         default:
-            return state
+            return state;
     }
 }

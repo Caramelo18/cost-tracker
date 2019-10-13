@@ -7,15 +7,11 @@ export interface Transaction {
     subscriptionId: string
 }
 
-export interface TransactionsHistory {
-    transactions: Transaction[]
+export interface TransactionsState {
+    readonly transactions: Transaction[]
 }
 
-export const ADD_TRANSACTION = 'ADD_TRANSACTION'
-
-interface AddTransaction {
-    type: typeof ADD_TRANSACTION
-    payload: Transaction
+export enum TransactionsActionTypes {
+    SET_TRANSACTIONS = '@@teams/SET_TRANSACTIONS',
+    ADD_TRANSACTION = '@@teams/ADD_TRANSACTIONS'
 }
-
-export type TransactionsActionTypes = AddTransaction | null

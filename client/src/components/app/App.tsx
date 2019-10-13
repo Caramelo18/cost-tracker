@@ -13,22 +13,18 @@ import Salary from '../salary/salary';
 import Subscriptions from '../subscriptions/subscriptions';
 import Analysis from '../analysis/analysis';
 
-import { AppState } from '../../store';
-import { TransactionsHistory } from '../../store/types';
-import { addTransaction } from '../../store/actions';
-
-const mapStateToProps = (state: AppState) => ({
-    transactions: state.transactions
-});
+import { Provider } from 'react-redux';
+import { Store } from 'redux';
+import { ApplicationState } from '../../store';
 
 interface AppProps {
-    addTransaction?: typeof addTransaction
-    transactions?: TransactionsHistory
+    store: Store<ApplicationState>;
 };
 
-class App extends React.Component<AppProps> {
-    render() {
-        return (
+const App: React.FC<AppProps> = ({ store }) => {
+
+    return (
+        <Provider store={store}>
             <Router>
                 <div className="App">
                     <Container>
@@ -46,9 +42,8 @@ class App extends React.Component<AppProps> {
                     </Container>
                 </div>
             </Router>
-        );
-    }
-
+        </Provider>
+    );
 }
 
 export default App;

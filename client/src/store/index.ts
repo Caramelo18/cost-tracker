@@ -1,8 +1,11 @@
 import { combineReducers } from 'redux'
 import { transactionsReducer } from './reducers';
+import { TransactionsState } from './types';
 
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
     transactions: transactionsReducer
 });
 
-export type AppState = ReturnType<typeof rootReducer>
+export interface ApplicationState {
+    transactions: TransactionsState
+}  

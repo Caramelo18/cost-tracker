@@ -11,14 +11,33 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
-import Transaction from './transaction/transaction';
+import { TransactionItem } from './transaction/transaction';
 import CreateModal from './create-modal/create-modal';
 import EditModal from './edit-modal/edit-modal';
 import DeleteModal from './delete-modal/delete-modal';
 
-import { addTransaction } from '../../store/actions';
+import { connect } from 'react-redux';
+import { ApplicationState } from '../../store';
+import { Transaction } from '../../store/types';
+import { setTransactions, addTransaction } from '../../store/actions';
 
-class Overview extends React.Component<any, any> {
+interface PropsFromDispatch {
+    setTransactions: typeof setTransactions,
+    addTransaction: typeof addTransaction
+}
+
+type AllProps = PropsFromDispatch
+
+const mapStateToProps = ({ transactions }: ApplicationState) => ({
+    transactions: transactions.transactions
+});
+
+const mapDispatchToProps = {
+    setTransactions: typeof setTransactions,
+    addTransaction: typeof addTransaction
+}
+
+class Overview extends React.Component<AllProps> {
     constructor(props: any) {
         super(props);
 
@@ -47,10 +66,10 @@ class Overview extends React.Component<any, any> {
         let defaultStartDate: Date = new Date(currentDate.getTime());
         defaultStartDate.setDate(1);
         defaultStartDate.setHours(0, 0, 0);
-        
+
         let defaultEndDate: Date = new Date(defaultStartDate.getFullYear(), defaultStartDate.getMonth() + 1, 0);
         defaultEndDate.setHours(23, 59, 59);
-        
+
         const startDate: Date = defaultStartDate;
         const endDate: Date = defaultEndDate;
 
@@ -80,12 +99,17 @@ class Overview extends React.Component<any, any> {
     }
 
     setGlobalState(transactions: any[]) {
-        console.log("global state", transactions)
-        /*for (let transactionRaw in transactions) {
-            let transactionId: string = transactionRaw['id'] as string;
-            let transaction: Transaction = { id: transactionId};
+        for (let transactionRaw in transactions) {
+            let id: string = (transactionRaw as any)['id'] as string;
+            let value: number = (transactionRaw as any)['value'] as number;
+            let category: string = (transactionRaw as any)['category'] as string;
+            let description: string = (transactionRaw as any)['description'] as string;
+            let date: Date = (transactionRaw as any)['date'] as Date;
+            let subscriptionId: any = (transactionRaw as any)['subscriptionId'] as any;
+            let transaction: Transaction = { id: id, value: value, category: category, description: description, date: date, subscriptionId: subscriptionId };
+
             addTransaction(transaction);
-        }*/
+        }
     }
 
     fillTable() {
@@ -102,7 +126,7 @@ class Overview extends React.Component<any, any> {
         const filterSummary = transactionsInfo['filterSummary'];
 
         transactions.forEach((transaction: any) => {
-            rows.push(<Transaction key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></Transaction>)
+            rows.push(<TransactionItem key={transaction.id} id={transaction.id} category={transaction.category} description={transaction.description} value={transaction.value} date={transaction.date} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete}></TransactionItem>)
         });
 
         return { transactions: rows, filterSummary: filterSummary };
@@ -393,4 +417,7 @@ class Overview extends React.Component<any, any> {
 
 }
 
-export default Overview;
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Overview);
