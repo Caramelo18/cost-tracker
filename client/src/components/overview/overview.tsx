@@ -16,6 +16,8 @@ import CreateModal from './create-modal/create-modal';
 import EditModal from './edit-modal/edit-modal';
 import DeleteModal from './delete-modal/delete-modal';
 
+import { addTransaction } from '../../store/actions';
+
 class Overview extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
@@ -64,6 +66,7 @@ class Overview extends React.Component<any, any> {
             .then(response => response.json())
             .then(data => {
                 this.setState({ transactions: data, modalData: {} });
+                this.setGlobalState(data);
             });
     }
 
@@ -74,6 +77,15 @@ class Overview extends React.Component<any, any> {
             .then(data => {
                 this.setState({ balance: data.balance });
             });
+    }
+
+    setGlobalState(transactions: any[]) {
+        console.log("global state", transactions)
+        /*for (let transactionRaw in transactions) {
+            let transactionId: string = transactionRaw['id'] as string;
+            let transaction: Transaction = { id: transactionId};
+            addTransaction(transaction);
+        }*/
     }
 
     fillTable() {
