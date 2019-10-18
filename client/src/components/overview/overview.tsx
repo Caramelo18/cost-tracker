@@ -16,7 +16,12 @@ import CreateModal from './create-modal/create-modal';
 import EditModal from './edit-modal/edit-modal';
 import DeleteModal from './delete-modal/delete-modal';
 
+import { StateContext } from '../app/StateProvider'
+
 class Overview extends React.Component<any, any> {
+    static contextType = StateContext;
+
+    
     constructor(props: any) {
         super(props);
 
@@ -64,6 +69,11 @@ class Overview extends React.Component<any, any> {
             .then(response => response.json())
             .then(data => {
                 this.setState({ transactions: data, modalData: {} });
+                const [{transactions }, dispatch] = this.context;  
+                dispatch({
+                    type: 'setTransactions',
+                    newTransactions: { data }
+                });
             });
     }
 
@@ -279,6 +289,7 @@ class Overview extends React.Component<any, any> {
         } else {
             const transactionsInfo = this.fillTable();
 
+            
             let transactions, filterSummary: any;
             if (transactionsInfo != null) {
                 transactions = transactionsInfo!['transactions'] ? transactionsInfo!['transactions'] : [];

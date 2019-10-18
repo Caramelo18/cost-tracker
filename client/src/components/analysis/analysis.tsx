@@ -6,20 +6,25 @@ import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 
-import { withAppContext } from '../app/AppContext';
+import { StateContext } from '../app/StateProvider'
 
 class Analysis extends React.Component<any, any> {
+    static contextType = StateContext;
+
     constructor(props: any) {
         super(props);
     }
 
     componentDidMount() {
-        console.log(this.props);
+        const [{ transactions }, dispatch] = this.context;
+        console.log(transactions);
     }
 
     render() {
-        return <div>Analysis tab</div>
+        return (
+            <div>Analysis tab</div>
+        );
     }
 }
 
-export default withAppContext(Analysis);
+export default Analysis;
