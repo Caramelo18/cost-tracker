@@ -11,6 +11,8 @@ import Header from '../header/header';
 import Overview from '../overview/overview';
 import Salary from '../salary/salary';
 import Subscriptions from '../subscriptions/subscriptions';
+import Analysis from '../analysis/analysis';
+
 
 const App: React.FC = () => {
     return (
@@ -23,6 +25,7 @@ const App: React.FC = () => {
                     <Row>
                         <Col>
                             <Route exact path="/" component={Overview} />
+                            <Route path="/analysis" render={props => <Analysis />} />
                             <Route path="/salary" component={Salary} />
                             <Route path="/subscriptions" component={Subscriptions} />
                         </Col>
@@ -30,7 +33,6 @@ const App: React.FC = () => {
                 </Container>
             </div>
         </Router>
-
     );
 }
 

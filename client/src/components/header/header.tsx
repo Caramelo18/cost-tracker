@@ -12,10 +12,11 @@ class Header extends React.Component<any, any> {
         return (
             <nav >
                 <Row>
-                    <Col sm={3}> <Link to="/" className="align-middle">Overview</Link> </Col>
-                    <Col sm={3}> <Link to="/salary" className="align-middle">Salary</Link> </Col>
-                    <Col sm={3}> <Link to="/budget" className="align-middle">Budget</Link> </Col>
-                    <Col sm={3}> <Link to="/subscriptions" className="align-middle">Subscriptions</Link> </Col>
+                    <Col> <Link to="/" className="align-middle">Overview</Link> </Col>
+                    <Col> <Link to="/analysis" className="align-middle">Analysis</Link> </Col>
+                    <Col> <Link to="/salary" className="align-middle">Salary</Link> </Col>
+                    <Col> <Link to="/budget" className="align-middle">Budget</Link> </Col>
+                    <Col> <Link to="/subscriptions" className="align-middle">Subscriptions</Link> </Col>
                 </Row>
             </nav>
         );
