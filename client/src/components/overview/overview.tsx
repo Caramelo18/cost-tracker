@@ -72,7 +72,7 @@ class Overview extends React.Component<any, any> {
                 const [{transactions }, dispatch] = this.context;  
                 dispatch({
                     type: 'setTransactions',
-                    newTransactions: { data }
+                    newTransactions: data 
                 });
             });
     }

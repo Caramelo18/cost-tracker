@@ -40,7 +40,7 @@ const App: React.FC = () => {
                         <Row>
                             <Col>
                                 <Route exact path="/" component={Overview} />
-                                <Route path="/analysis" render={props => <Analysis />} />
+                                <Route path="/analysis" component={Analysis} />
                                 <Route path="/salary" component={Salary} />
                                 <Route path="/subscriptions" component={Subscriptions} />
                             </Col>

@@ -13,11 +13,32 @@ class Analysis extends React.Component<any, any> {
 
     constructor(props: any) {
         super(props);
+        this.groupTransactions = this.groupTransactions.bind(this);
     }
 
     componentDidMount() {
-        const [{ transactions }, dispatch] = this.context;
-        console.log(transactions);
+        const [{ transactions }] = this.context;
+        this.setState({ transactions: transactions }, () => this.groupTransactions());
+    }
+
+    groupTransactions() {
+        const transactions = this.state.transactions;
+
+        let groupedTransactions: any = {};
+
+        groupedTransactions = transactions.reduce((accumulator: any, currTransaction: any) => {
+            const description = this.parseDescription(currTransaction.description);
+            accumulator[description] = accumulator[description] || [];
+            accumulator[description].push(currTransaction);
+            return accumulator;
+        }, Object.create(null));
+
+        console.log(groupedTransactions);
+
+    }
+
+    parseDescription(description: string) {
+        return description.split(" ")[0];
     }
 
     render() {
