@@ -16,12 +16,12 @@ import CreateModal from './create-modal/create-modal';
 import EditModal from './edit-modal/edit-modal';
 import DeleteModal from './delete-modal/delete-modal';
 
-import { StateContext } from '../app/StateProvider'
+import { StateContext } from '../app/StateProvider';
 
 class Overview extends React.Component<any, any> {
     static contextType = StateContext;
 
-    
+
     constructor(props: any) {
         super(props);
 
@@ -50,32 +50,17 @@ class Overview extends React.Component<any, any> {
         let defaultStartDate: Date = new Date(currentDate.getTime());
         defaultStartDate.setDate(1);
         defaultStartDate.setHours(0, 0, 0);
-        
+
         let defaultEndDate: Date = new Date(defaultStartDate.getFullYear(), defaultStartDate.getMonth() + 1, 0);
         defaultEndDate.setHours(23, 59, 59);
-        
+
         const startDate: Date = defaultStartDate;
         const endDate: Date = defaultEndDate;
 
         this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {}, searchString: "", searchCategories: ["Needs", "Wants", "Other", "Credit"], startDate: startDate, endDate: endDate, defaultStartDate: defaultStartDate, defaultEndDate: defaultEndDate });
-        this.loadTransactions();
-        this.loadBalance()
+        this.loadBalance();
     }
 
-    loadTransactions() {
-        let transactionsUrl = "http://localhost:8080/transactions";
-
-        fetch(transactionsUrl)
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ transactions: data, modalData: {} });
-                const [{transactions }, dispatch] = this.context;  
-                dispatch({
-                    type: 'setTransactions',
-                    newTransactions: data 
-                });
-            });
-    }
 
     loadBalance() {
         let balanceUrl = "http://localhost:8080/balance";
@@ -87,12 +72,8 @@ class Overview extends React.Component<any, any> {
     }
 
     fillTable() {
-        if (!('transactions' in this.state)) {
-            return;
-        }
-
         let rows: object[] = [];
-        let transactions = this.state.transactions;
+        let [{ transactions }] = this.context;
 
         const transactionsInfo = this.filterTransactions(transactions);
 
@@ -284,106 +265,109 @@ class Overview extends React.Component<any, any> {
 
     render() {
         let content;
-        if (!this.state) {
-            content = <div>Loading</div>
-        } else {
-            const transactionsInfo = this.fillTable();
+        const [{ loaded }] = this.context;
+        
+        if (!loaded || !this.state) {
+            content = <div>Loading</div>;
+            return content;
+        }
+        
+        const transactionsInfo = this.fillTable();
+        
+        let transactions, filterSummary: any;
+        if (transactionsInfo != null) {
+            transactions = transactionsInfo!['transactions'] ? transactionsInfo!['transactions'] : [];
+            filterSummary = transactionsInfo!['filterSummary'];
+        }
+
+        content = <>
+            <Row className="overview-bar">
+                <Col>
+                    <Row className="text-md-right">
+                        <Col sm={12} className="balanceValue">{this.state.balance}</Col>
+                    </Row>
+                    <Row className="balanceLabel text-md-right">
+                        <Col sm={12}>Balance</Col>
+                    </Row>
+                </Col>
+                <Col sm={8}></Col>
+                <Col className="addButtonContainer">
+                    <Button variant="success" onClick={this.toggleCreate}>Add Transaction</Button>
+                </Col>
+
+            </Row>
+
+            <Row className="search-bar justify-content-end">
+                <div className="datePickerContainer">
+                    <label>From: </label>
+                    <DatePicker selected={this.state.startDate} onChange={this.editStartDate} />
+                </div>
+
+                <div className="datePickerContainer">
+                    <label className="dateLabel">To: </label>
+                    <DatePicker selected={this.state.endDate} onChange={this.editEndDate} />
+                </div>
+
+                <DropdownButton id="dropdown-basic-button" title="Category">
+                    <Form.Group id="formGridCheckbox">
+                        <Form.Check className="checkbox" type="checkbox" label="Needs" name="Needs" checked={this.state.searchCategories.includes("Needs")} onChange={this.editSearchCategory} />
+                        <Form.Check className="checkbox" type="checkbox" label="Wants" name="Wants" checked={this.state.searchCategories.includes("Wants")} onChange={this.editSearchCategory} />
+                        <Form.Check className="checkbox" type="checkbox" label="Other" name="Other" checked={this.state.searchCategories.includes("Other")} onChange={this.editSearchCategory} />
+                        <Form.Check className="checkbox" type="checkbox" label="Credit" name="Credit" checked={this.state.searchCategories.includes("Credit")} onChange={this.editSearchCategory} />
+                    </Form.Group>
+                </DropdownButton>
+                <Form className="">
+                    <Form.Control type="text" placeholder="Search" value={this.state.searchString} onChange={this.editSearchString} />
+                </Form>
+            </Row>
+
+            <Row className="justify-content-end">
+                {this.filterEnabled() &&
+                    <div className="filterSummary">
+                        <span>
+                            Transactions: {filterSummary!['numTransactions']}
+                        </span>
+                        <span>
+                            Average value: {filterSummary['averageValue']}
+                        </span>
+                        <span>
+                            Total value: {filterSummary['totalValue']}
+                        </span>
+                    </div>}
+            </Row>
+
+            <Row className="table-row">
+                <Table striped bordered hover size="sm">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Value</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {transactions}
+                    </tbody>
+                </Table>
+            </Row>
+
+
+            <CreateModal showCreate={this.state.showCreate} toggleCreate={this.toggleCreate}
+                modalData={this.state.modalData} submitCreate={this.submitCreate}
+                editModalData={this.editModalData} />
+
+            <EditModal showEdit={this.state.showEdit} toggleEdit={this.toggleEdit}
+                modalData={this.state.modalData} submitEdit={this.submitEdit}
+                editModalData={this.editModalData} />
+
+            <DeleteModal showDelete={this.state.showDelete} toggleDelete={this.toggleDelete}
+                modalData={this.state.modalData} submitDelete={this.submitDelete} />
+
+        </>
 
             
-            let transactions, filterSummary: any;
-            if (transactionsInfo != null) {
-                transactions = transactionsInfo!['transactions'] ? transactionsInfo!['transactions'] : [];
-                filterSummary = transactionsInfo!['filterSummary'];
-            }
-
-            content = <>
-                <Row className="overview-bar">
-                    <Col>
-                        <Row className="text-md-right">
-                            <Col sm={12} className="balanceValue">{this.state.balance}</Col>
-                        </Row>
-                        <Row className="balanceLabel text-md-right">
-                            <Col sm={12}>Balance</Col>
-                        </Row>
-                    </Col>
-                    <Col sm={8}></Col>
-                    <Col className="addButtonContainer">
-                        <Button variant="success" onClick={this.toggleCreate}>Add Transaction</Button>
-                    </Col>
-
-                </Row>
-
-                <Row className="search-bar justify-content-end">
-                    <div className="datePickerContainer">
-                        <label>From: </label>
-                        <DatePicker selected={this.state.startDate} onChange={this.editStartDate} />
-                    </div>
-
-                    <div className="datePickerContainer">
-                        <label className="dateLabel">To: </label>
-                        <DatePicker selected={this.state.endDate} onChange={this.editEndDate} />
-                    </div>
-
-                    <DropdownButton id="dropdown-basic-button" title="Category">
-                        <Form.Group id="formGridCheckbox">
-                            <Form.Check className="checkbox" type="checkbox" label="Needs" name="Needs" checked={this.state.searchCategories.includes("Needs")} onChange={this.editSearchCategory} />
-                            <Form.Check className="checkbox" type="checkbox" label="Wants" name="Wants" checked={this.state.searchCategories.includes("Wants")} onChange={this.editSearchCategory} />
-                            <Form.Check className="checkbox" type="checkbox" label="Other" name="Other" checked={this.state.searchCategories.includes("Other")} onChange={this.editSearchCategory} />
-                            <Form.Check className="checkbox" type="checkbox" label="Credit" name="Credit" checked={this.state.searchCategories.includes("Credit")} onChange={this.editSearchCategory} />
-                        </Form.Group>
-                    </DropdownButton>
-                    <Form className="">
-                        <Form.Control type="text" placeholder="Search" value={this.state.searchString} onChange={this.editSearchString} />
-                    </Form>
-                </Row>
-
-                <Row className="justify-content-end">
-                    {this.filterEnabled() &&
-                        <div className="filterSummary">
-                            <span>
-                                Transactions: {filterSummary!['numTransactions']}
-                            </span>
-                            <span>
-                                Average value: {filterSummary['averageValue']}
-                            </span>
-                            <span>
-                                Total value: {filterSummary['totalValue']}
-                            </span>
-                        </div>}
-                </Row>
-
-                <Row className="table-row">
-                    <Table striped bordered hover size="sm">
-                        <thead>
-                            <tr>
-                                <th>Category</th>
-                                <th>Description</th>
-                                <th>Value</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {transactions}
-                        </tbody>
-                    </Table>
-                </Row>
-
-
-                <CreateModal showCreate={this.state.showCreate} toggleCreate={this.toggleCreate}
-                    modalData={this.state.modalData} submitCreate={this.submitCreate}
-                    editModalData={this.editModalData} />
-
-                <EditModal showEdit={this.state.showEdit} toggleEdit={this.toggleEdit}
-                    modalData={this.state.modalData} submitEdit={this.submitEdit}
-                    editModalData={this.editModalData} />
-
-                <DeleteModal showDelete={this.state.showDelete} toggleDelete={this.toggleDelete}
-                    modalData={this.state.modalData} submitDelete={this.submitDelete} />
-
-            </>
-
-        }
 
         return (
             content

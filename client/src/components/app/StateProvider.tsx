@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer } from 'react';
 
-export const initialState: object = { transactions: [] };
+export const initialState: object = { loaded: false, transactions: [] };
 
 export const StateContext = createContext(initialState);
 

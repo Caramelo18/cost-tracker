@@ -13,12 +13,20 @@ import Salary from '../salary/salary';
 import Subscriptions from '../subscriptions/subscriptions';
 import Analysis from '../analysis/analysis';
 
-import { StateProvider, initialState } from './StateProvider';
+import ServiceWrapper from './ServiceWrapper';
+import * as CTService from './CostTrackerService';
+
+import { StateProvider, useStateValue, initialState } from './StateProvider';
 
 
-const App: React.FC = () => {
-    const reducer = (state: any, action: any) => {
+class App extends React.Component<any, any> {
+    reducer = (state: any, action: any) => {
         switch (action.type) {
+            case 'setLoaded':
+                return {
+                    ...state,
+                    loaded: action.loaded
+                };
             case 'setTransactions':
                 return {
                     ...state,
@@ -29,27 +37,31 @@ const App: React.FC = () => {
         }
     };
 
-    return (
-        <StateProvider initialState={initialState} reducer={reducer}>
-            <Router>
-                <div className="App">
-                    <Container>
-                        <Row>
-                            <Header />
-                        </Row>
-                        <Row>
-                            <Col>
-                                <Route exact path="/" component={Overview} />
-                                <Route path="/analysis" component={Analysis} />
-                                <Route path="/salary" component={Salary} />
-                                <Route path="/subscriptions" component={Subscriptions} />
-                            </Col>
-                        </Row>
-                    </Container>
-                </div>
-            </Router>
-        </StateProvider>
-    );
+    render() {
+        return (
+            <StateProvider initialState={initialState} reducer={this.reducer}>
+                <ServiceWrapper>
+                    <Router>
+                        <div className="App">
+                            <Container>
+                                <Row>
+                                    <Header />
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <Route exact path="/" component={Overview} />
+                                        <Route path="/analysis" component={Analysis} />
+                                        <Route path="/salary" component={Salary} />
+                                        <Route path="/subscriptions" component={Subscriptions} />
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </div>
+                    </Router>
+                </ServiceWrapper>
+            </StateProvider>
+        );
+    }
 }
 
 export default App;
