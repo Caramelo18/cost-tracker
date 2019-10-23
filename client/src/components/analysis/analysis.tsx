@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 
-import { StateContext } from '../app/StateProvider'
+import { StateContext } from '../app/StateProvider';
 
 class Analysis extends React.Component<any, any> {
     static contextType = StateContext;
@@ -64,7 +64,7 @@ class Analysis extends React.Component<any, any> {
         const groupedMonthlyTransactions = this.groupAllTransactions(transactions);
 
         console.log(groupedTransactions);
-        
+
         return (
             <div>Analysis tab</div>
         );

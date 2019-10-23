@@ -11,7 +11,11 @@ import PayModal from './pay-modal/pay-modal';
 import EditModal from './edit-modal/edit-modal';
 import DeleteModal from './delete-modal/delete-modal';
 
+import { StateContext } from '../app/StateProvider';
+
 class Subscriptions extends React.Component<any, any> {
+    static contextType = StateContext;
+
     constructor(props: any) {
         super(props);
 
@@ -30,7 +34,7 @@ class Subscriptions extends React.Component<any, any> {
 
     componentDidMount() {
         this.setState({ showAdd: false, showPay: false, showEdit: false, showDelete: false, subscriptions: [] });
-        this.loadSubscriptions();
+        // this.loadSubscriptions();
     }
 
     loadSubscriptions() {
@@ -39,7 +43,6 @@ class Subscriptions extends React.Component<any, any> {
         fetch(url).then(response => response.json()).then(response => {
             this.setState({ subscriptions: response });
         })
-
     }
 
     toggleAdd() {
@@ -138,7 +141,7 @@ class Subscriptions extends React.Component<any, any> {
 
     submitDelete() {
         let url = "http://localhost:8080/subscriptions/" + this.state.modalData.id;
-        
+
         fetch(url, {
             method: 'DELETE',
         }).then(() => {
@@ -154,10 +157,10 @@ class Subscriptions extends React.Component<any, any> {
         this.setState({ subscriptions: subscriptions });
     }
 
-    fillTable() {
+    fillTable(subscriptions: any) {
         let rows: any[] = [];
 
-        this.state.subscriptions.forEach((subscription: any) => {
+        subscriptions.forEach((subscription: any) => {
             let element = <Subscription key={subscription.id} id={subscription.id} category={subscription.category} description={subscription.description} value={subscription.value}
                 periodicity={subscription.periodicity} paidUntil={subscription.paidUntil} daysInterval={subscription.daysInterval} startDate={subscription.startDate}
                 togglePay={this.togglePay} toggleEdit={this.toggleEdit} toggleDelete={this.toggleDelete} />
@@ -168,12 +171,15 @@ class Subscriptions extends React.Component<any, any> {
     }
 
     render() {
-        if (this.state == null) {
-            return <div>
-                Loading
-            </div>
+        const [{ loaded }] = this.context;
+
+        if (!loaded || !this.state) {
+            return <div>Loading</div>;
         }
-        let tableRows = this.fillTable();
+
+        const [{ subscriptions }] = this.context;
+
+        const tableRows = this.fillTable(subscriptions);
 
         return (<>
             <Button onClick={this.toggleAdd}>Add Subscription</Button>

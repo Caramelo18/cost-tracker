@@ -14,9 +14,8 @@ import Subscriptions from '../subscriptions/subscriptions';
 import Analysis from '../analysis/analysis';
 
 import ServiceWrapper from './ServiceWrapper';
-import * as CTService from './CostTrackerService';
 
-import { StateProvider, useStateValue, initialState } from './StateProvider';
+import { StateProvider, initialState } from './StateProvider';
 
 
 class App extends React.Component<any, any> {
@@ -25,13 +24,28 @@ class App extends React.Component<any, any> {
             case 'setLoaded':
                 return {
                     ...state,
-                    loaded: action.loaded
+                    loaded: state.transactions.length > 0 && state.balance != null && state.subscriptions.length > 0
                 };
             case 'setTransactions':
                 return {
                     ...state,
                     transactions: action.newTransactions
                 };
+            case 'setBalance':
+                return {
+                    ...state,
+                    balance: action.balance
+                };
+            case 'setSubscriptions':
+                return {
+                    ...state,
+                    subscriptions: action.subscriptions
+                }
+            case 'setSalaries':
+                return {
+                    ...state,
+                    salaries: action.salaries
+                }
             default:
                 return state;
         }

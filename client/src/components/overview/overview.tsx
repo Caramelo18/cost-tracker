@@ -58,7 +58,6 @@ class Overview extends React.Component<any, any> {
         const endDate: Date = defaultEndDate;
 
         this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {}, searchString: "", searchCategories: ["Needs", "Wants", "Other", "Credit"], startDate: startDate, endDate: endDate, defaultStartDate: defaultStartDate, defaultEndDate: defaultEndDate });
-        this.loadBalance();
     }
 
 
@@ -69,6 +68,11 @@ class Overview extends React.Component<any, any> {
             .then(data => {
                 this.setState({ balance: data.balance });
             });
+    }
+
+    getBalance() {
+        const [{ balance }] = this.context;
+        return balance;
     }
 
     fillTable() {
@@ -273,6 +277,7 @@ class Overview extends React.Component<any, any> {
         }
         
         const transactionsInfo = this.fillTable();
+        const balance = this.getBalance();
         
         let transactions, filterSummary: any;
         if (transactionsInfo != null) {
@@ -284,7 +289,7 @@ class Overview extends React.Component<any, any> {
             <Row className="overview-bar">
                 <Col>
                     <Row className="text-md-right">
-                        <Col sm={12} className="balanceValue">{this.state.balance}</Col>
+                        <Col sm={12} className="balanceValue">{balance}</Col>
                     </Row>
                     <Row className="balanceLabel text-md-right">
                         <Col sm={12}>Balance</Col>
