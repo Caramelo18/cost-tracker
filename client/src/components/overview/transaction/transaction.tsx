@@ -24,4 +24,4 @@ class Transaction extends React.Component<any, any> {
 
 }
 
-export default Transaction;
+export { Transaction as TransactionItem };
