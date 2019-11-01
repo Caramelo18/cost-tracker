@@ -80,4 +80,42 @@ export async function deleteTransaction(id: string): Promise<any> {
     });
 }
 
-export default { loadTransactions, loadBalance, loadSubscriptions } as CTService;
+export async function addSubscription(data: any): Promise<any> {
+    const url = "http://localhost:8080/subscriptions";
+
+    return fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then(response => response.json())
+        .then(response => {
+            return response;
+        });
+}
+
+export async function editSubscription(id: number, data: any): Promise<any> {
+    const url = "http://localhost:8080/subscriptions/" + id;
+
+    return fetch(url, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    }).then(response => response.json())
+        .then(response => {
+            return response;
+        });
+}
+
+export async function deleteSubscription(id: number): Promise<any> {
+    const url = "http://localhost:8080/subscriptions/" + id;
+
+    return fetch(url, {
+        method: 'DELETE',
+    }).then(() => {
+        return id;
+    });
+}

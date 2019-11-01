@@ -12,21 +12,21 @@ import EditModal from './edit-modal/edit-modal';
 import DeleteModal from './delete-modal/delete-modal';
 
 import { StateContext } from '../app/StateProvider';
+import * as CTService from '../app/CostTrackerService';
 
 class Subscriptions extends React.Component<any, any> {
     static contextType = StateContext;
 
     constructor(props: any) {
         super(props);
-
-        this.loadSubscriptions = this.loadSubscriptions.bind(this);
         this.toggleAdd = this.toggleAdd.bind(this);
         this.editModalData = this.editModalData.bind(this);
+
         this.submitAdd = this.submitAdd.bind(this);
         this.submitPay = this.submitPay.bind(this);
         this.submitEdit = this.submitEdit.bind(this);
         this.submitDelete = this.submitDelete.bind(this);
-        this.updateSubscriptions = this.updateSubscriptions.bind(this);
+
         this.togglePay = this.togglePay.bind(this);
         this.toggleEdit = this.toggleEdit.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
@@ -34,15 +34,6 @@ class Subscriptions extends React.Component<any, any> {
 
     componentDidMount() {
         this.setState({ showAdd: false, showPay: false, showEdit: false, showDelete: false, subscriptions: [] });
-        // this.loadSubscriptions();
-    }
-
-    loadSubscriptions() {
-        let url = "http://localhost:8080/subscriptions";
-
-        fetch(url).then(response => response.json()).then(response => {
-            this.setState({ subscriptions: response });
-        })
     }
 
     toggleAdd() {
@@ -75,8 +66,7 @@ class Subscriptions extends React.Component<any, any> {
         this.setState({ modalData: modalData });
     }
 
-    submitAdd() {
-        let url = "http://localhost:8080/subscriptions";
+    async submitAdd() {
         let data = Object.assign({}, this.state.modalData);
 
         if (data.periodicity === "Monthly") {
@@ -89,17 +79,9 @@ class Subscriptions extends React.Component<any, any> {
             data.daysInterval = 365;
         }
 
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }).then(response => response.json())
-            .then(response => {
-                this.updateSubscriptions(response);
-                this.toggleAdd();
-            });
+        const response = await CTService.addSubscription(data);
+        this.addSubscription(response);
+        this.toggleAdd();
     }
 
     submitPay() {
@@ -121,40 +103,70 @@ class Subscriptions extends React.Component<any, any> {
         this.togglePay([]);
     }
 
-    submitEdit() {
-        let url = "http://localhost:8080/subscriptions/";
+    async submitEdit() {
         let data = this.state.modalData;
-        url = url + data.id;
-
-        fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }).then(response => response.json())
-            .then(response => {
-                this.loadSubscriptions();
-                this.toggleEdit({});
-            });
+        
+        const response = await CTService.editSubscription(data.id, data);
+        
+        this.editSubscription(response);
+        this.toggleEdit({});
     }
 
-    submitDelete() {
-        let url = "http://localhost:8080/subscriptions/" + this.state.modalData.id;
+    async submitDelete() {
+        const id = this.state.modalData.id;
 
-        fetch(url, {
-            method: 'DELETE',
-        }).then(() => {
-            this.loadSubscriptions();
-            this.toggleDelete({});
+        
+        const deletedId = await CTService.deleteSubscription(id);
+        this.deleteSubscription(deletedId);
+        this.toggleDelete({});
+
+    }
+
+    addSubscription(subscription: any) {
+        const [, dispatch] = this.context;
+
+        dispatch({
+            type: 'addSubscription',
+            subscription: subscription
+        });
+    }
+
+    editSubscription(subscription: any) {
+        const [{ subscriptions }, dispatch] = this.context;
+
+        subscriptions.forEach((element: any) => {
+            if(element.id === subscription.id){
+                element.category = subscription.category;
+                element.description = subscription.description;
+                element.value = subscription.value;
+                element.periodicity = subscription.periodicity;
+                element.daysInterval = subscription.daysInterval;
+                element.paidUntil = subscription.paidUntil;
+                element.startDate = subscription.startDate;
+            }
         });
 
+        dispatch({
+            type: 'setSubscriptions',
+            subscriptions: subscriptions
+        });
     }
 
-    updateSubscriptions(subscription: any) {
-        let subscriptions = this.state.subscriptions;
-        subscriptions.push(subscription);
-        this.setState({ subscriptions: subscriptions });
+    deleteSubscription(subscriptionId: any) {
+        const [{ subscriptions }, dispatch] = this.context;
+        
+        let newSubscriptions: any[] = [];
+
+        subscriptions.forEach((element: any) => {
+            if(element.id !== subscriptionId)  {
+                newSubscriptions.push(element);
+            }
+        });
+
+        dispatch({
+            type: 'setSubscriptions',
+            subscriptions: newSubscriptions
+        });
     }
 
     fillTable(subscriptions: any) {

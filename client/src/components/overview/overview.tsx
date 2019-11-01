@@ -41,7 +41,6 @@ class Overview extends React.Component<any, any> {
         this.editStartDate = this.editStartDate.bind(this);
         this.editEndDate = this.editEndDate.bind(this);
 
-        this.updateCreateList = this.updateCreateList.bind(this);
         this.updateEditList = this.updateEditList.bind(this);
         this.updateDeleteList = this.updateDeleteList.bind(this);
     }
@@ -60,7 +59,6 @@ class Overview extends React.Component<any, any> {
 
         this.setState({ showCreate: false, showEdit: false, showDelete: false, modalData: {}, searchString: "", searchCategories: ["Needs", "Wants", "Other", "Credit"], startDate: startDate, endDate: endDate, defaultStartDate: defaultStartDate, defaultEndDate: defaultEndDate });
     }
-
 
     async loadBalance() {
         const balance = await CTService.loadBalance();
@@ -160,13 +158,6 @@ class Overview extends React.Component<any, any> {
         newDate.setHours(23, 59, 59);
 
         this.setState({ endDate: newDate });
-    }
-
-    updateCreateList(newTransaction: any) {
-        let transactions = this.state.transactions;
-        let newTransactionArr = [newTransaction];
-        transactions = newTransactionArr.concat(transactions);
-        this.setState({ transactions: transactions });
     }
 
     updateEditList(updatedTransaction: any) {
@@ -362,8 +353,6 @@ class Overview extends React.Component<any, any> {
                 modalData={this.state.modalData} submitDelete={this.submitDelete} />
 
         </>
-
-
 
         return (
             content

@@ -53,6 +53,13 @@ class App extends React.Component<any, any> {
                     ...state,
                     transactions: transactions
                 }
+            case 'addSubscription':
+                let subscriptions = state["subscriptions"];
+                subscriptions.push(action.subscription);
+                return {
+                    ...state,
+                    subscriptions: subscriptions
+                }
             default:
                 return state;
         }
