@@ -46,6 +46,13 @@ class App extends React.Component<any, any> {
                     ...state,
                     salaries: action.salaries
                 }
+            case 'addTransaction':
+                let transactions = state["transactions"];
+                transactions.push(action.transaction);
+                return {
+                    ...state,
+                    transactions: transactions
+                }
             default:
                 return state;
         }

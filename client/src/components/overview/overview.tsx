@@ -17,6 +17,7 @@ import EditModal from './edit-modal/edit-modal';
 import DeleteModal from './delete-modal/delete-modal';
 
 import { StateContext } from '../app/StateProvider';
+import * as CTService from '../app/CostTrackerService';
 
 class Overview extends React.Component<any, any> {
     static contextType = StateContext;
@@ -61,13 +62,14 @@ class Overview extends React.Component<any, any> {
     }
 
 
-    loadBalance() {
-        let balanceUrl = "http://localhost:8080/balance";
-        fetch(balanceUrl)
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ balance: data.balance });
-            });
+    async loadBalance() {
+        const balance = await CTService.loadBalance();
+        const [, dispatch] = this.context;
+
+        dispatch({
+            type: 'setBalance',
+            balance: balance
+        });
     }
 
     getBalance() {
@@ -104,54 +106,36 @@ class Overview extends React.Component<any, any> {
         this.setState({ showDelete: !this.state.showDelete, modalData: data });
     }
 
-    submitCreate() {
-        let url = "http://localhost:8080/transactions/";
+    async submitCreate() {
+        const response = await CTService.addTransaction(this.state.modalData);
 
-        let data = this.state.modalData;
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }).then(response => response.json())
-            .then(response => {
-                this.updateCreateList(response);
-                this.loadBalance();
-                this.toggleCreate();
-            });
-    }
-
-    submitEdit() {
-        let url = "http://localhost:8080/transactions/" + this.state.modalData.id;
-        let data = { 'category': this.state.modalData.category, 'description': this.state.modalData.description, 'value': this.state.modalData.value, 'date': this.state.modalData.date };
-
-        fetch(url, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }).then(response => response.json())
-            .then(response => {
-                this.updateEditList(response);
-                this.loadBalance();
-                this.toggleEdit({});
-            });
-    }
-
-    submitDelete() {
-        let id = this.state.modalData.id;
-        let url = "http://localhost:8080/transactions/" + id;
-
-        fetch(url, {
-            method: 'DELETE',
-        }).then(() => {
-            this.updateDeleteList(id);
-            this.loadBalance();
-            this.toggleDelete({});
+        const [, dispatch] = this.context;
+        dispatch({
+            type: 'addTransaction',
+            transaction: response
         });
+        this.loadBalance();
+        this.toggleCreate();
+    }
+
+    async submitEdit() {
+        const id = this.state.modalData.id;
+        const data = { 'category': this.state.modalData.category, 'description': this.state.modalData.description, 'value': this.state.modalData.value, 'date': this.state.modalData.date };
+
+        const response = await CTService.editTransaction(id, data);
+
+        this.updateEditList(response);
+        this.loadBalance();
+        this.toggleEdit({});
+    }
+
+    async submitDelete() {
+        const idToDelete = this.state.modalData.id;
+        const id = await CTService.deleteTransaction(idToDelete);
+
+        this.updateDeleteList(id);
+        this.loadBalance();
+        this.toggleDelete({});
     }
 
     editModalData(event: any) {
@@ -186,7 +170,7 @@ class Overview extends React.Component<any, any> {
     }
 
     updateEditList(updatedTransaction: any) {
-        let transactions = this.state.transactions.slice();
+        let [{ transactions }, dispatch] = this.context;
 
         transactions.forEach((transaction: any) => {
             if (transaction.id === updatedTransaction.id) {
@@ -197,18 +181,25 @@ class Overview extends React.Component<any, any> {
             }
         });
 
-        this.setState({ transactions: transactions });
+        dispatch({
+            type: 'setTransactions',
+            newTransactions: transactions
+        });
     }
 
     updateDeleteList(removedId: string) {
-        let transactions = [];
+        let newTransactions = [];
+        let [{ transactions }, dispatch] = this.context;
 
-        for (let transaction of this.state.transactions) {
+        for (let transaction of transactions) {
             if (transaction.id !== removedId)
-                transactions.push(transaction);
+                newTransactions.push(transaction);
         }
 
-        this.setState({ transactions: transactions });
+        dispatch({
+            type: 'setTransactions',
+            newTransactions: newTransactions
+        });
     }
 
     filterEnabled() {
@@ -270,15 +261,15 @@ class Overview extends React.Component<any, any> {
     render() {
         let content;
         const [{ loaded }] = this.context;
-        
+
         if (!loaded || !this.state) {
             content = <div>Loading</div>;
             return content;
         }
-        
+
         const transactionsInfo = this.fillTable();
         const balance = this.getBalance();
-        
+
         let transactions, filterSummary: any;
         if (transactionsInfo != null) {
             transactions = transactionsInfo!['transactions'] ? transactionsInfo!['transactions'] : [];
@@ -372,7 +363,7 @@ class Overview extends React.Component<any, any> {
 
         </>
 
-            
+
 
         return (
             content
