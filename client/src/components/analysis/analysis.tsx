@@ -1,26 +1,24 @@
 import React from 'react';
 import './analysis.css';
 
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Table from 'react-bootstrap/Table';
-import Button from 'react-bootstrap/Button';
-
 import { StateContext } from '../app/StateProvider';
+
+import AnalysisTable from './table';
+
 
 class Analysis extends React.Component<any, any> {
     static contextType = StateContext;
 
     constructor(props: any) {
         super(props);
-        this.groupAllTransactions = this.groupAllTransactions.bind(this);
-        this.groupMonthlyTransactions = this.groupMonthlyTransactions.bind(this);
+        this.groupTransactions = this.groupTransactions.bind(this);
+        this.groupTransactionsByMonth = this.groupTransactionsByMonth.bind(this);
     }
 
     componentDidMount() {
     }
 
-    groupAllTransactions(transactions: any) {
+    groupTransactions(transactions: any) {
 
         let groupedTransactions: any = {};
 
@@ -38,18 +36,72 @@ class Analysis extends React.Component<any, any> {
             summarizedTransactions[key]['count'] = groupedTransactions[key].length;
             summarizedTransactions[key]['total'] = groupedTransactions[key].reduce((total: any, next: any) => total + next.value, 0);
             summarizedTransactions[key]['average'] = summarizedTransactions[key]['total'] / summarizedTransactions[key]['count'];
+            summarizedTransactions[key]['average'] = Math.round(summarizedTransactions[key]['average'] * 100) / 100;
         }
 
         return summarizedTransactions;
     }
 
-    groupMonthlyTransactions(transactions: any) {
-        console.log(transactions);
-        return transactions;
+    groupTransactionsByMonth(transactions: any[]) {
+        const groupedByMonth = transactions.reduce((acc, transaction) => {
+            let date = new Date(transaction["date"]);
+            const month = date.getMonth() + 1;
+            const year = date.getFullYear();
+            const dateKey = month + "/" + year;
+
+            if (!acc[dateKey]) {
+                acc[dateKey] = [];
+            }
+            acc[dateKey].push(transaction);
+
+            return acc;
+        }, {});
+
+
+        let grouped: any = {};
+
+        for (let month in groupedByMonth) {
+            grouped[month] = this.groupTransactions(groupedByMonth[month]);
+        }
+
+        return grouped;
     }
 
     parseDescription(description: string) {
         return description.split(" ")[0];
+    }
+
+    parseDataToTable(transactions: any) {
+        let array = [];
+        for (let key in transactions) {
+            let data = transactions[key];
+            data['description'] = key;
+            array.push(data);
+        }
+
+        array = array.filter(desc => desc.total < 0);
+        return array;
+    }
+
+    getTableHeader() {
+        return [
+            {
+                Header: "Description",
+                accessor: "description"
+            },
+            {
+                Header: "Count",
+                accessor: "count"
+            },
+            {
+                Header: "Total",
+                accessor: "total"
+            },
+            {
+                Header: "Average",
+                accessor: "average"
+            }
+        ]
     }
 
     render() {
@@ -59,14 +111,15 @@ class Analysis extends React.Component<any, any> {
             return <div>Loading</div>;
         }
         const [{ transactions }] = this.context;
-        
-        const groupedTransactions = this.groupAllTransactions(transactions);
-        const groupedMonthlyTransactions = this.groupAllTransactions(transactions);
 
-        console.log(groupedTransactions);
+        const groupedTransactions = this.parseDataToTable(this.groupTransactions(transactions));
+        const groupedMonthlyTransactions = this.groupTransactionsByMonth(transactions);
+        const tableHeader = this.getTableHeader();
 
         return (
-            <div>Analysis tab</div>
+            <>
+                <AnalysisTable data={groupedTransactions} header={tableHeader} />
+            </>
         );
     }
 }

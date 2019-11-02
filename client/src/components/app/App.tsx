@@ -48,7 +48,7 @@ class App extends React.Component<any, any> {
                 }
             case 'addTransaction':
                 let transactions = state["transactions"];
-                transactions.push(action.transaction);
+                transactions = [action.transaction].concat(transactions);
                 return {
                     ...state,
                     transactions: transactions
