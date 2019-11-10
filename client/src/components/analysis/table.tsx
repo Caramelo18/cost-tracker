@@ -7,7 +7,7 @@ class AnalysisTable extends React.Component<any, any> {
     render() {
         const data: any= this.props.data;
         const columns: any = this.props.header;
-        console.log(data);
+        
         return (
             <div>
                 <ReactTable
@@ -18,7 +18,7 @@ class AnalysisTable extends React.Component<any, any> {
                     resizable={false}
                     defaultSorted={[
                         {
-                          id: "total",
+                          id: this.props.orderBy,
                           desc: false
                         }
                       ]}

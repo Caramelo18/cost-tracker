@@ -47,7 +47,7 @@ class Analysis extends React.Component<any, any> {
             let date = new Date(transaction["date"]);
             const month = date.getMonth() + 1;
             const year = date.getFullYear();
-            const dateKey = month + "/" + year;
+            const dateKey = year + "/" + month;
 
             if (!acc[dateKey]) {
                 acc[dateKey] = [];
@@ -65,6 +65,57 @@ class Analysis extends React.Component<any, any> {
         }
 
         return grouped;
+    }
+
+    findRecurringTransactions(transactions: any[]) {
+        const groupedMonthlyTransactions = this.groupTransactionsByMonth(transactions);
+        const monthsToInclude = 3;
+
+        let months = Object.keys(groupedMonthlyTransactions);
+        months = months.slice(0, monthsToInclude);
+
+        let recurringTransactions: any = {};
+
+        for (let month of months) {
+            const monthTransactions = groupedMonthlyTransactions[month];
+            for (let transactionType in monthTransactions) {
+                if (!(transactionType in recurringTransactions)) {
+                    recurringTransactions[transactionType] = {};
+                }
+                recurringTransactions[transactionType][month] = groupedMonthlyTransactions[month][transactionType];
+            }
+        }
+
+        let transactionsToDelete = [];
+        for (let transactionType in recurringTransactions) {
+            // TODO: allow multiple transactions on one month
+            if (Object.keys(recurringTransactions[transactionType]).length < 2) {
+                transactionsToDelete.push(transactionType);
+            }
+        }
+
+        for (let transactionToDelete of transactionsToDelete) {
+            delete recurringTransactions[transactionToDelete];
+        }
+
+        for (let transactionType in recurringTransactions) {
+            let total = 0;
+            let count = 0;
+            let avgPerMonth;
+            for (let month in recurringTransactions[transactionType]) {
+                const transTypeInMonth = recurringTransactions[transactionType][month];
+                total += transTypeInMonth['total'];
+                count += transTypeInMonth['count'];
+            }
+            avgPerMonth = total / Object.keys(recurringTransactions[transactionType]).length;
+            avgPerMonth = Math.round(avgPerMonth * 100) / 100;
+
+            recurringTransactions[transactionType]['total'] = total;
+            recurringTransactions[transactionType]['count'] = count;
+            recurringTransactions[transactionType]['avgPerMonth'] = avgPerMonth;
+        }
+
+        return recurringTransactions;
     }
 
     parseDescription(description: string) {
@@ -104,6 +155,27 @@ class Analysis extends React.Component<any, any> {
         ]
     }
 
+    getRecurringTransactionsHeader() {
+        return [
+            {
+                Header: "Description",
+                accessor: "description"
+            },
+            {
+                Header: "Count",
+                accessor: "count"
+            },
+            {
+                Header: "Total",
+                accessor: "total"
+            },
+            {
+                Header: "Average Per Month",
+                accessor: "avgPerMonth"
+            }
+        ]
+    }
+
     render() {
         const [{ loaded }] = this.context;
 
@@ -113,12 +185,15 @@ class Analysis extends React.Component<any, any> {
         const [{ transactions }] = this.context;
 
         const groupedTransactions = this.parseDataToTable(this.groupTransactions(transactions));
-        const groupedMonthlyTransactions = this.groupTransactionsByMonth(transactions);
+        const recurringTransactions = this.parseDataToTable(this.findRecurringTransactions(transactions));
+        
         const tableHeader = this.getTableHeader();
 
         return (
             <>
-                <AnalysisTable data={groupedTransactions} header={tableHeader} />
+                <AnalysisTable data={groupedTransactions} header={tableHeader} orderBy="total"/>
+
+                <AnalysisTable data={recurringTransactions} header={this.getRecurringTransactionsHeader()} orderBy="avgPerMonth" />
             </>
         );
     }
