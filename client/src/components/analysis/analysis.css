@@ -1,0 +1,22 @@
+h4 {
+    text-align: left;
+    margin-left: 20px;
+}
+
+.recurringExpensesSpan {
+    display: flex;
+    justify-content: space-between;
+    height: 100%;
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
+
+.monthsInput {
+    width: 50px;
+    margin-left: 15px;
+    height: auto;
+}
+
+.recurringExpansesDiv{
+    margin-bottom: 50px;
+}

@@ -13,9 +13,11 @@ class Analysis extends React.Component<any, any> {
         super(props);
         this.groupTransactions = this.groupTransactions.bind(this);
         this.groupTransactionsByMonth = this.groupTransactionsByMonth.bind(this);
+        this.editMonthsToAggregate = this.editMonthsToAggregate.bind(this);
     }
 
     componentDidMount() {
+        this.setState({ monthsToAggregate: 3 });
     }
 
     groupTransactions(transactions: any) {
@@ -69,7 +71,7 @@ class Analysis extends React.Component<any, any> {
 
     findRecurringTransactions(transactions: any[]) {
         const groupedMonthlyTransactions = this.groupTransactionsByMonth(transactions);
-        const monthsToInclude = 3;
+        const monthsToInclude = this.state.monthsToAggregate;
 
         let months = Object.keys(groupedMonthlyTransactions);
         months = months.slice(0, monthsToInclude);
@@ -176,6 +178,11 @@ class Analysis extends React.Component<any, any> {
         ]
     }
 
+    editMonthsToAggregate(event: any) {
+        let string: any = event.target.value;
+        this.setState({ monthsToAggregate: string });
+    }
+
     render() {
         const [{ loaded }] = this.context;
 
@@ -191,9 +198,21 @@ class Analysis extends React.Component<any, any> {
 
         return (
             <>
-                <AnalysisTable data={groupedTransactions} header={tableHeader} orderBy="total"/>
+                <div>
+                    <h4>Grouped Transactions</h4>
+                    <AnalysisTable data={groupedTransactions} header={tableHeader} orderBy="total"/>
+                </div>
 
-                <AnalysisTable data={recurringTransactions} header={this.getRecurringTransactionsHeader()} orderBy="avgPerMonth" />
+                <div className="recurringExpansesDiv">
+                    <span className="recurringExpensesSpan">
+                        <h4>Recurring Expenses</h4>
+                        <span>
+                            <label>Months To Include:</label>
+                            <input value={this.state.monthsToAggregate} onChange={this.editMonthsToAggregate} className="monthsInput"/>
+                        </span>
+                    </span>
+                    <AnalysisTable data={recurringTransactions} header={this.getRecurringTransactionsHeader()} orderBy="avgPerMonth" />
+                </div>
             </>
         );
     }
