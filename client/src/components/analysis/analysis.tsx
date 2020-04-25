@@ -186,7 +186,7 @@ class Analysis extends React.Component<any, any> {
     render() {
         const [{ loaded }] = this.context;
 
-        if (!loaded) {
+        if (!loaded || this.state == null) {
             return <div>Loading</div>;
         }
         const [{ transactions }] = this.context;

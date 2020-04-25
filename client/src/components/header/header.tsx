@@ -4,7 +4,7 @@ import './header.css';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import { BrowserRouter as _, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 class Header extends React.Component<any, any> {
