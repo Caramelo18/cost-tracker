@@ -25,6 +25,7 @@ services:
       - "3000:3000"
     volumes:
       - ./client/:/usr/src/app
+    stdin_open: true
 
   backend:
     image: gradle:jdk11
