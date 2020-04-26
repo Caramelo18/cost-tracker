@@ -1,0 +1,11 @@
+.monthsSelectorRow {
+    height: 30px;
+    margin-bottom: 20px;
+    justify-content: flex-end;
+}
+
+.monthsSelectorRow > span > input {
+    width: 40px;
+    margin-left: 10px;
+    margin-right: 15px;
+}
