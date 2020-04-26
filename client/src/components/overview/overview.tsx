@@ -179,7 +179,7 @@ class Overview extends React.Component<any, any> {
     }
 
     updateDeleteList(removedId: string) {
-        let newTransactions = [];
+        let newTransactions: any[] = [];
         let [{ transactions }, dispatch] = this.context;
 
         for (let transaction of transactions) {

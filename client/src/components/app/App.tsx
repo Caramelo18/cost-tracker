@@ -10,6 +10,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import Header from '../header/header';
 import Overview from '../overview/overview';
 import Salary from '../salary/salary';
+import Budget from '../budget/budget';
 import Subscriptions from '../subscriptions/subscriptions';
 import Analysis from '../analysis/analysis';
 
@@ -80,6 +81,7 @@ class App extends React.Component<any, any> {
                                         <Route exact path="/" component={Overview} />
                                         <Route path="/analysis" component={Analysis} />
                                         <Route path="/salary" component={Salary} />
+                                        <Route path="/budget" component={Budget} />
                                         <Route path="/subscriptions" component={Subscriptions} />
                                     </Col>
                                 </Row>

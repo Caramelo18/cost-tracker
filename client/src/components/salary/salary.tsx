@@ -170,7 +170,7 @@ class Salary extends React.Component<any, any> {
         if (this.state == null) {
             return null;
         }
-        let salariesTable = null;
+        let salariesTable: any = null;
         let startDate = this.state.currentSalary.startDate;
         startDate = new Date(startDate).toDateString();
         if (this.state.salaries != null) {

@@ -5,6 +5,8 @@ import { StateContext } from '../app/StateProvider';
 
 import AnalysisTable from './table';
 
+import { groupTransactionsByMonth } from '../../utils/utils';
+
 
 class Analysis extends React.Component<any, any> {
     static contextType = StateContext;
@@ -45,20 +47,7 @@ class Analysis extends React.Component<any, any> {
     }
 
     groupTransactionsByMonth(transactions: any[]) {
-        const groupedByMonth = transactions.reduce((acc, transaction) => {
-            let date = new Date(transaction["date"]);
-            const month = date.getMonth() + 1;
-            const year = date.getFullYear();
-            const dateKey = year + "/" + month;
-
-            if (!acc[dateKey]) {
-                acc[dateKey] = [];
-            }
-            acc[dateKey].push(transaction);
-
-            return acc;
-        }, {});
-
+        const groupedByMonth = groupTransactionsByMonth(transactions);
 
         let grouped: any = {};
 
@@ -88,7 +77,7 @@ class Analysis extends React.Component<any, any> {
             }
         }
 
-        let transactionsToDelete = [];
+        let transactionsToDelete: any[] = [];
         for (let transactionType in recurringTransactions) {
             // TODO: allow multiple transactions on one month
             if (Object.keys(recurringTransactions[transactionType]).length < 2) {
@@ -125,7 +114,7 @@ class Analysis extends React.Component<any, any> {
     }
 
     parseDataToTable(transactions: any) {
-        let array = [];
+        let array: any[] = [];
         for (let key in transactions) {
             let data = transactions[key];
             data['description'] = key;
